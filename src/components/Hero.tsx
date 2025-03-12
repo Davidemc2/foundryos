@@ -17,6 +17,10 @@ const Hero = () => {
             Turn your idea into a product with AI
           </h1>
           
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-5 opacity-0 animate-fadeIn animation-delay-600">
+            From Prompt to Product. No Coding. No Team. No Delay.
+          </p>
+          
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 opacity-0 animate-fadeIn animation-delay-600">
             The AI project manager that breaks down tasks, builds your app with Lovable.dev, and iterates until you've got a polished product — all automatically.
           </p>
