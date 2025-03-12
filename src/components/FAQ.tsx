@@ -57,7 +57,7 @@ const FAQ = () => {
     <section 
       id="faq" 
       ref={sectionRef}
-      className="py-20 opacity-0 transition-opacity duration-1000 ease-out section-darker relative"
+      className="py-20 opacity-0 transition-opacity duration-1000 ease-out section-dark relative"
     >
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,hsl(var(--primary)/0.08)_0%,transparent_100%)]" />
       <div className="container-custom max-w-4xl">
@@ -72,24 +72,24 @@ const FAQ = () => {
           {faqs.map((faq, index) => (
             <div 
               key={index} 
-              className="glass-card rounded-xl overflow-hidden border border-gray-800/50 hover:border-violet-900/30 transition-colors"
+              className="white-card overflow-hidden border border-gray-200/10 hover:border-violet-100/30 transition-colors"
             >
               <button
                 className="w-full flex justify-between items-center p-6 text-left focus:outline-none"
                 onClick={() => toggleFaq(index)}
               >
-                <h3 className="font-medium text-lg text-white">{faq.question}</h3>
+                <h3 className="font-medium text-lg text-gray-800">{faq.question}</h3>
                 <div className="flex-shrink-0 ml-4">
                   {openIndex === index ? (
-                    <Minus size={18} className="text-violet-400" />
+                    <Minus size={18} className="text-violet-600" />
                   ) : (
-                    <Plus size={18} className="text-gray-400" />
+                    <Plus size={18} className="text-gray-500" />
                   )}
                 </div>
               </button>
               
               <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                <div className="p-6 pt-0 text-muted-foreground">
+                <div className="p-6 pt-0 text-gray-600">
                   {faq.answer}
                 </div>
               </div>

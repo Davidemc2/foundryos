@@ -5,13 +5,13 @@
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
+    --background: 0 0% 7%;
     --foreground: 213 31% 91%;
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 222 47% 8%; 
+    --popover: 0 0% 7%; 
     --popover-foreground: 210 40% 98%;
 
     --primary: 268 76% 57%;
@@ -51,7 +51,15 @@
 
 @layer components {
   .glass-card {
-    @apply bg-gray-800/30 backdrop-blur-md border border-gray-700/50 shadow-sm;
+    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-sm;
+  }
+  
+  .dark-glass-card {
+    @apply bg-gray-900/30 backdrop-blur-md border border-gray-800/50 shadow-sm;
+  }
+  
+  .white-card {
+    @apply bg-white text-gray-900 rounded-xl shadow-lg;
   }
   
   .heading-xl {
@@ -79,11 +87,15 @@
   }
 
   .section-dark {
-    @apply bg-gray-900;
+    @apply bg-background;
   }
 
   .section-darker {
-    @apply bg-black;
+    @apply bg-gray-950;
+  }
+
+  .section-light {
+    @apply bg-white text-gray-900;
   }
 
   .typewriter-container {
@@ -104,6 +116,14 @@
 
   .orbiting-element {
     @apply absolute w-2 h-2 rounded-full bg-violet-400 animate-orbit;
+  }
+  
+  .journey-step {
+    @apply flex flex-col items-center text-center transition-all;
+  }
+
+  .journey-icon-container {
+    @apply w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-all;
   }
 }
 

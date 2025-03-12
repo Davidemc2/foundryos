@@ -34,7 +34,7 @@ const Navbar = () => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out py-4 px-6 md:px-8",
         scrolled
-          ? "bg-gray-900/90 backdrop-blur-md shadow-sm border-b border-gray-800/50"
+          ? "bg-background/90 backdrop-blur-md shadow-sm border-b border-gray-800/50"
           : "bg-transparent"
       )}
     >
@@ -69,7 +69,7 @@ const Navbar = () => {
         {/* CTA Button */}
         <a
           href="#early-access"
-          className="btn-glow hidden md:flex px-4 py-2 rounded-full text-sm font-medium bg-violet-700 text-white hover:bg-violet-600 transition-all shadow-sm hover:shadow-violet-500/40"
+          className="btn-glow hidden md:flex px-4 py-2 rounded-full text-sm font-medium bg-violet-700 text-white hover:bg-violet-600 transition-all shadow-sm hover:shadow-violet-500/40 transform hover:scale-105"
         >
           Request Early Access
         </a>
@@ -84,7 +84,7 @@ const Navbar = () => {
         </button>
         
         {/* Mobile Menu */}
-        <div className={`fixed inset-0 bg-gray-900 z-40 transition-transform duration-300 ease-in-out transform ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden`}>
+        <div className={`fixed inset-0 bg-background z-40 transition-transform duration-300 ease-in-out transform ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden`}>
           <div className="flex flex-col items-center justify-center h-full gap-8 text-center">
             <a 
               href="#who" 
@@ -123,7 +123,7 @@ const Navbar = () => {
             </a>
             <a
               href="#early-access"
-              className="btn-glow px-6 py-3 rounded-full text-base font-medium bg-violet-700 text-white hover:bg-violet-600 transition-colors mt-4 shadow-sm hover:shadow-violet-500/40"
+              className="btn-glow px-6 py-3 rounded-full text-base font-medium bg-violet-700 text-white hover:bg-violet-600 transition-colors mt-4 shadow-sm hover:shadow-violet-500/40 transform hover:scale-105"
               onClick={closeMobileMenu}
             >
               Request Early Access

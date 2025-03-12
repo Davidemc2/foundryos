@@ -95,11 +95,11 @@ const Features = () => {
           ].map((item, i) => (
             <div 
               key={i} 
-              className="glass-card rounded-xl p-6 hover:shadow-md hover:shadow-violet-700/20 transition-all group transform hover:-translate-y-1 hover:scale-[1.01]"
+              className="white-card p-6 hover:shadow-xl transition-all group transform hover:-translate-y-1 hover:scale-[1.01]"
             >
-              <h3 className="heading-sm mb-3">{item.title}</h3>
-              <p className="text-muted-foreground mb-4">{item.description}</p>
-              <p className="text-sm font-medium text-violet-400 flex items-center">
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-3">{item.title}</h3>
+              <p className="text-gray-600 mb-4">{item.description}</p>
+              <p className="text-sm font-medium text-violet-600 flex items-center">
                 {item.cta}
                 <ArrowRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
               </p>
@@ -108,18 +108,18 @@ const Features = () => {
         </div>
       </FeatureSection>
       
-      <div className="section-darker">
+      <div className="section-light">
         <FeatureSection
           id="problem"
           icon={Code}
           title="The Problem vs The Solution"
           description="AI tools and no-code builders still require significant manual effort."
-          bgClass="section-darker"
+          bgClass="section-light"
         >
           <div className="grid md:grid-cols-2 gap-12 items-stretch">
-            <div className="glass-card rounded-xl p-6 border border-gray-800/50">
-              <h3 className="heading-sm mb-4 text-center text-red-400">The Problem</h3>
-              <p className="text-muted-foreground mb-6 text-center font-medium">
+            <div className="dark-glass-card rounded-xl p-6 border border-gray-200/50">
+              <h3 className="heading-sm mb-4 text-center text-red-500">The Problem</h3>
+              <p className="text-gray-700 mb-6 text-center font-medium">
                 AI tools don't manage projects. No-code is still manual. Time is wasted.
               </p>
               
@@ -132,18 +132,18 @@ const Features = () => {
                   "Building a real product requires dozens of manual steps"
                 ].map((item, i) => (
                   <li key={i} className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-900/50 text-red-400 flex items-center justify-center mr-3 mt-0.5">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 text-red-500 flex items-center justify-center mr-3 mt-0.5">
                       <X size={14} className="stroke-[3]" />
                     </div>
-                    <p className="text-gray-300">{item}</p>
+                    <p className="text-gray-700">{item}</p>
                   </li>
                 ))}
               </ul>
             </div>
             
-            <div className="glass-card rounded-xl p-6 border border-gray-800/50">
-              <h3 className="heading-sm mb-4 text-center text-green-400">The Solution</h3>
-              <p className="text-muted-foreground mb-6 text-center font-medium">
+            <div className="dark-glass-card rounded-xl p-6 border border-gray-200/50">
+              <h3 className="heading-sm mb-4 text-center text-green-500">The Solution</h3>
+              <p className="text-gray-700 mb-6 text-center font-medium">
                 An artificial intelligence project manager that builds for you, from start to finish.
               </p>
               
@@ -156,10 +156,10 @@ const Features = () => {
                   "One AI builds your entire product, from start to finish"
                 ].map((item, i) => (
                   <li key={i} className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-900/50 text-green-400 flex items-center justify-center mr-3 mt-0.5">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-500 flex items-center justify-center mr-3 mt-0.5">
                       <Check size={14} className="stroke-[3]" />
                     </div>
-                    <p className="text-gray-300">{item}</p>
+                    <p className="text-gray-700">{item}</p>
                   </li>
                 ))}
               </ul>

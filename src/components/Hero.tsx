@@ -1,9 +1,9 @@
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageSquare, LayoutList, Code, Rocket } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="section-darker pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+    <section className="section-dark pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
       {/* Floating elements */}
       <div className="floating-element top-20 left-20 w-[300px] h-[300px] animate-float"></div>
       <div className="floating-element bottom-20 right-20 w-[400px] h-[400px] animate-float-slow animation-delay-800"></div>
@@ -43,7 +43,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-1000">
             <a 
               href="#early-access" 
-              className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 text-lg"
+              className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg"
             >
               Request Early Access
               <ArrowRight size={16} />
@@ -58,36 +58,40 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="relative mt-16 md:mt-24 opacity-0 animate-slideUp animation-delay-1200">
-          <div className="glass-card rounded-2xl p-1 md:p-2 shadow-xl border border-violet-900/20">
-            <div className="bg-gray-800 rounded-xl overflow-hidden p-6">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
-                <div className="flex-1 flex flex-col items-center text-center md:text-left md:items-start">
-                  <div className="bg-violet-900/80 text-violet-200 w-10 h-10 rounded-full flex items-center justify-center mb-3">1</div>
-                  <h3 className="font-medium mb-1 text-white">Prompt</h3>
-                  <p className="text-sm text-gray-400">Describe your idea in natural language</p>
-                </div>
-                
-                <div className="hidden md:block text-gray-600">
-                  <ArrowRight size={24} />
-                </div>
-                
-                <div className="flex-1 flex flex-col items-center text-center">
-                  <div className="bg-green-900/80 text-green-200 w-10 h-10 rounded-full flex items-center justify-center mb-3">2</div>
-                  <h3 className="font-medium mb-1 text-white">Task Breakdown</h3>
-                  <p className="text-sm text-gray-400">AI plans development steps</p>
-                </div>
-                
-                <div className="hidden md:block text-gray-600">
-                  <ArrowRight size={24} />
-                </div>
-                
-                <div className="flex-1 flex flex-col items-center text-center md:text-right md:items-end">
-                  <div className="bg-purple-900/80 text-purple-200 w-10 h-10 rounded-full flex items-center justify-center mb-3">3</div>
-                  <h3 className="font-medium mb-1 text-white">App Creation</h3>
-                  <p className="text-sm text-gray-400">Built with Lovable.dev and launched</p>
-                </div>
+        {/* Visual Journey - 4-step process */}
+        <div className="mt-24 white-card p-8 opacity-0 animate-slideUp animation-delay-1200">
+          <h3 className="heading-sm mb-10 text-gray-800">Your Journey from Idea to Product</h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="journey-step group">
+              <div className="journey-icon-container bg-violet-100 text-violet-700 group-hover:bg-violet-700 group-hover:text-white">
+                <MessageSquare size={32} />
               </div>
+              <h4 className="font-semibold text-lg text-gray-800 mb-2">Prompt</h4>
+              <p className="text-sm text-gray-600">Describe your product idea in natural language</p>
+            </div>
+            
+            <div className="journey-step group">
+              <div className="journey-icon-container bg-violet-100 text-violet-700 group-hover:bg-violet-700 group-hover:text-white">
+                <LayoutList size={32} />
+              </div>
+              <h4 className="font-semibold text-lg text-gray-800 mb-2">Task Breakdown</h4>
+              <p className="text-sm text-gray-600">AI breaks down your idea into comprehensive tasks</p>
+            </div>
+            
+            <div className="journey-step group">
+              <div className="journey-icon-container bg-violet-100 text-violet-700 group-hover:bg-violet-700 group-hover:text-white">
+                <Code size={32} />
+              </div>
+              <h4 className="font-semibold text-lg text-gray-800 mb-2">App Built</h4>
+              <p className="text-sm text-gray-600">Our AI builds your app with Lovable.dev</p>
+            </div>
+            
+            <div className="journey-step group">
+              <div className="journey-icon-container bg-violet-100 text-violet-700 group-hover:bg-violet-700 group-hover:text-white">
+                <Rocket size={32} />
+              </div>
+              <h4 className="font-semibold text-lg text-gray-800 mb-2">Launch</h4>
+              <p className="text-sm text-gray-600">Your finished product is deployed and ready</p>
             </div>
           </div>
         </div>
