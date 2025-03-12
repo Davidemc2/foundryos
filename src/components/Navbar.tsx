@@ -40,11 +40,11 @@ const Navbar = () => {
     >
       <div className="container-custom flex items-center justify-between">
         <a 
-          href="#" 
+          href="#top" 
           className="text-xl font-bold text-white flex items-center gap-2 z-50"
         >
           <span className="text-violet-500 text-2xl">●</span>
-          AIBuilder
+          Foundry OS<span className="text-violet-500">.</span>
         </a>
         
         {/* Desktop Navigation */}
