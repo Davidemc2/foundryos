@@ -1,3 +1,4 @@
+
 import { ArrowRight } from "lucide-react";
 
 const Hero = () => {
@@ -17,7 +18,7 @@ const Hero = () => {
           </h1>
           
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 opacity-0 animate-fadeIn animation-delay-600">
-            The AI project manager that breaks down tasks, builds your app with Lovable.dev, and iterates until you've got a polished product — all automatically.
+            Artificial intelligence that breaks down your idea, builds your app with Lovable.dev, and iterates until it's ready to ship — no coding needed
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-800">
