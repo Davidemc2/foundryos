@@ -1,5 +1,4 @@
-
-import { ArrowRight, Code, Rocket, Users, X, Check, AlertTriangle, GitMerge, RefreshCcw, Layers, Bug, BarChart, Zap, Cloud, Terminal } from "lucide-react";
+import { ArrowRight, Code, Rocket, Users, X, Check, AlertTriangle, GitMerge, RefreshCcw, Layers, Bug, BarChart, Zap, Cloud, Terminal, Brain, Cpu, Workflow } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const FeatureSection = ({ 
@@ -194,40 +193,35 @@ const Features = () => {
         description="A complete AI project manager that turns your idea into a finished product without the manual work."
         bgClass="section-dark"
       >
-        {/* New Feature-Benefit Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Redesigned Solution Section with 3 vertically stacked cards */}
+        <div className="flex flex-col md:flex-row gap-6">
           {[
             {
-              icon: Terminal,
-              title: "Smart Task Breakdown",
-              benefit: "Your idea is automatically split into actionable development tasks"
+              icon: Brain,
+              title: "Automated Planning",
+              benefit: "Your app is broken into build-ready tasks instantly"
             },
             {
-              icon: Zap,
-              title: "Automated Development",
-              benefit: "AI builds your entire codebase without manual coding or debugging"
+              icon: Cpu,
+              title: "Smart Development",
+              benefit: "AI writes, tests, and refines your entire codebase"
             },
             {
-              icon: Cloud,
-              title: "Seamless Integration",
-              benefit: "All components are connected and work together out of the box"
-            },
-            {
-              icon: BarChart,
-              title: "Continuous Improvement",
-              benefit: "AI iterates based on your feedback until your product is perfect"
+              icon: Workflow,
+              title: "Instant Deployment",
+              benefit: "Your product is deployed and ready to use immediately"
             }
           ].map((feature, i) => (
             <div 
               key={i}
-              className="flex flex-col glass-card p-6 rounded-xl border border-violet-800/30 opacity-0 animate-slideUp"
-              style={{ animationDelay: `${i * 150}ms` }}
+              className="flex flex-col glass-card p-8 rounded-xl border border-violet-800/30 opacity-0 animate-slideUp"
+              style={{ animationDelay: `${i * 200}ms` }}
             >
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-violet-900/80 text-violet-200 flex items-center justify-center mb-4">
-                <feature.icon size={24} />
+              <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-violet-900/80 text-violet-200 flex items-center justify-center mb-6 mx-auto">
+                <feature.icon size={32} />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-300 text-sm">{feature.benefit}</p>
+              <h3 className="text-2xl font-bold text-white mb-3 text-center">{feature.title}</h3>
+              <p className="text-gray-300 text-lg text-center">{feature.benefit}</p>
             </div>
           ))}
         </div>

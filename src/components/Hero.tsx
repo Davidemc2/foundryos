@@ -52,7 +52,7 @@ const Hero = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-1000">
             <a 
-              href="/early-access" 
+              href="https://form.typeform.com/to/xxxx" 
               className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg animate-bounce-subtle"
             >
               Get Early Access
