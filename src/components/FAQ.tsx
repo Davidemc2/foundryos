@@ -57,8 +57,9 @@ const FAQ = () => {
     <section 
       id="faq" 
       ref={sectionRef}
-      className="py-20 opacity-0 transition-opacity duration-1000 ease-out bg-violet-50/40"
+      className="py-20 opacity-0 transition-opacity duration-1000 ease-out section-darker relative"
     >
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,hsl(var(--primary)/0.08)_0%,transparent_100%)]" />
       <div className="container-custom max-w-4xl">
         <div className="text-center mb-12">
           <h2 className="heading-lg mb-4">Frequently Asked Questions</h2>
@@ -71,16 +72,16 @@ const FAQ = () => {
           {faqs.map((faq, index) => (
             <div 
               key={index} 
-              className="glass-card rounded-xl overflow-hidden border border-gray-100"
+              className="glass-card rounded-xl overflow-hidden border border-gray-800/50 hover:border-violet-900/30 transition-colors"
             >
               <button
                 className="w-full flex justify-between items-center p-6 text-left focus:outline-none"
                 onClick={() => toggleFaq(index)}
               >
-                <h3 className="font-medium text-lg">{faq.question}</h3>
+                <h3 className="font-medium text-lg text-white">{faq.question}</h3>
                 <div className="flex-shrink-0 ml-4">
                   {openIndex === index ? (
-                    <Minus size={18} className="text-violet-600" />
+                    <Minus size={18} className="text-violet-400" />
                   ) : (
                     <Plus size={18} className="text-gray-400" />
                   )}

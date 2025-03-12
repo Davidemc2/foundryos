@@ -122,6 +122,26 @@ export default {
             opacity: "0.8",
           },
         },
+        typewriter: {
+          "0%": { width: "0" },
+          "100%": { width: "100%" }
+        },
+        blink: {
+          "0%, 100%": { borderColor: "transparent" },
+          "50%": { borderColor: "hsl(var(--primary))" }
+        },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 5px 0 rgba(124, 58, 237, 0.5)" },
+          "50%": { boxShadow: "0 0 20px 5px rgba(124, 58, 237, 0.7)" }
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" }
+        },
+        "orbit": {
+          "0%": { transform: "rotate(0deg) translateX(10px) rotate(0deg)" },
+          "100%": { transform: "rotate(360deg) translateX(10px) rotate(-360deg)" }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -130,6 +150,14 @@ export default {
         slideUp: "slideUp 0.8s ease-out forwards",
         slideRight: "slideRight 0.8s ease-out forwards",
         "pulse-slow": "pulse-slow 3s ease-in-out infinite",
+        typewriter: "typewriter 4s steps(40) 1s forwards",
+        "cursor-blink": "blink 0.7s infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "float": "float 6s ease-in-out infinite",
+        "float-slow": "float 8s ease-in-out infinite",
+        "orbit": "orbit 10s linear infinite",
+        "orbit-slow": "orbit 15s linear infinite",
+        "orbit-reverse": "orbit 12s linear infinite reverse"
       },
     },
   },

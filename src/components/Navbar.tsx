@@ -34,34 +34,34 @@ const Navbar = () => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out py-4 px-6 md:px-8",
         scrolled
-          ? "bg-white/90 backdrop-blur-md shadow-sm"
+          ? "bg-gray-900/90 backdrop-blur-md shadow-sm border-b border-gray-800/50"
           : "bg-transparent"
       )}
     >
       <div className="container-custom flex items-center justify-between">
         <a 
           href="#" 
-          className="text-xl font-bold text-foreground flex items-center gap-2 z-50"
+          className="text-xl font-bold text-white flex items-center gap-2 z-50"
         >
-          <span className="text-violet-600 text-2xl">●</span>
+          <span className="text-violet-500 text-2xl">●</span>
           AIBuilder
         </a>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#who" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
+          <a href="#who" className="text-sm font-medium text-gray-300 hover:text-violet-400 transition-colors">
             Who it's for
           </a>
-          <a href="#problem" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
+          <a href="#problem" className="text-sm font-medium text-gray-300 hover:text-violet-400 transition-colors">
             The Problem
           </a>
-          <a href="#solution" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
+          <a href="#solution" className="text-sm font-medium text-gray-300 hover:text-violet-400 transition-colors">
             Our Solution
           </a>
-          <a href="#how-it-works" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
+          <a href="#how-it-works" className="text-sm font-medium text-gray-300 hover:text-violet-400 transition-colors">
             How It Works
           </a>
-          <a href="#faq" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
+          <a href="#faq" className="text-sm font-medium text-gray-300 hover:text-violet-400 transition-colors">
             FAQ
           </a>
         </nav>
@@ -69,14 +69,14 @@ const Navbar = () => {
         {/* CTA Button */}
         <a
           href="#early-access"
-          className="hidden md:flex px-4 py-2 rounded-full text-sm font-medium bg-violet-700 text-white hover:bg-violet-800 transition-all shadow-sm hover:shadow-md"
+          className="btn-glow hidden md:flex px-4 py-2 rounded-full text-sm font-medium bg-violet-700 text-white hover:bg-violet-600 transition-all shadow-sm hover:shadow-violet-500/40"
         >
           Request Early Access
         </a>
         
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden z-50 p-2 text-gray-700"
+          className="md:hidden z-50 p-2 text-gray-300"
           onClick={toggleMobileMenu}
           aria-label="Toggle mobile menu"
         >
@@ -84,46 +84,46 @@ const Navbar = () => {
         </button>
         
         {/* Mobile Menu */}
-        <div className={`fixed inset-0 bg-white z-40 transition-transform duration-300 ease-in-out transform ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden`}>
+        <div className={`fixed inset-0 bg-gray-900 z-40 transition-transform duration-300 ease-in-out transform ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden`}>
           <div className="flex flex-col items-center justify-center h-full gap-8 text-center">
             <a 
               href="#who" 
-              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
+              className="text-lg font-medium text-gray-300 hover:text-violet-400 transition-colors"
               onClick={closeMobileMenu}
             >
               Who it's for
             </a>
             <a 
               href="#problem" 
-              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
+              className="text-lg font-medium text-gray-300 hover:text-violet-400 transition-colors"
               onClick={closeMobileMenu}
             >
               The Problem
             </a>
             <a 
               href="#solution" 
-              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
+              className="text-lg font-medium text-gray-300 hover:text-violet-400 transition-colors"
               onClick={closeMobileMenu}
             >
               Our Solution
             </a>
             <a 
               href="#how-it-works" 
-              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
+              className="text-lg font-medium text-gray-300 hover:text-violet-400 transition-colors"
               onClick={closeMobileMenu}
             >
               How It Works
             </a>
             <a 
               href="#faq" 
-              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
+              className="text-lg font-medium text-gray-300 hover:text-violet-400 transition-colors"
               onClick={closeMobileMenu}
             >
               FAQ
             </a>
             <a
               href="#early-access"
-              className="px-6 py-3 rounded-full text-base font-medium bg-violet-700 text-white hover:bg-violet-800 transition-colors mt-4"
+              className="btn-glow px-6 py-3 rounded-full text-base font-medium bg-violet-700 text-white hover:bg-violet-600 transition-colors mt-4 shadow-sm hover:shadow-violet-500/40"
               onClick={closeMobileMenu}
             >
               Request Early Access

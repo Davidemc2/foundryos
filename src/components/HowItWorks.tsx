@@ -68,11 +68,12 @@ const HowItWorks = () => {
     <section 
       id="how-it-works" 
       ref={sectionRef}
-      className="py-20 md:py-28 bg-gradient-to-b from-white to-violet-50/50 opacity-0 transition-opacity duration-1000 ease-out"
+      className="section-dark py-20 md:py-28 opacity-0 transition-opacity duration-1000 ease-out relative"
     >
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_50%_at_50%_50%,hsl(var(--primary)/0.1)_0%,transparent_100%)]" />
       <div className="container-custom">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-violet-50 text-violet-700 mb-6">
+          <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-violet-900/80 text-violet-200 mb-6">
             The Process
           </span>
           <h2 className="heading-lg mb-4">How It Works</h2>
@@ -85,14 +86,15 @@ const HowItWorks = () => {
           {steps.map((step, index) => (
             <div 
               key={step.id}
-              className="glass-card rounded-xl p-6 hover:shadow-md transition-all group"
+              className="glass-card rounded-xl p-6 hover:shadow-md hover:shadow-violet-700/20 transition-all transform hover:-translate-y-1 hover:scale-[1.01] opacity-0 animate-slideUp"
+              style={{ animationDelay: `${800 + index * 200}ms` }}
             >
               <div className={`flex items-center mb-4 gap-4`}>
                 <div className={`w-12 h-12 rounded-xl ${
-                  step.color === 'violet' ? 'bg-violet-100 text-violet-600' :
-                  step.color === 'green' ? 'bg-green-100 text-green-600' :
-                  step.color === 'purple' ? 'bg-purple-100 text-purple-600' :
-                  'bg-orange-100 text-orange-600'
+                  step.color === 'violet' ? 'bg-violet-900/80 text-violet-200' :
+                  step.color === 'green' ? 'bg-green-900/80 text-green-200' :
+                  step.color === 'purple' ? 'bg-purple-900/80 text-purple-200' :
+                  'bg-orange-900/80 text-orange-200'
                 } flex items-center justify-center flex-shrink-0`}>
                   <step.icon size={24} />
                 </div>
@@ -106,17 +108,17 @@ const HowItWorks = () => {
                 {step.description}
               </p>
               
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-100 text-sm text-gray-600 italic">
+              <div className="bg-gray-900/90 rounded-lg p-3 border border-gray-700/20 text-sm text-gray-400 italic">
                 {step.example}
               </div>
             </div>
           ))}
         </div>
         
-        <div className="mt-16 text-center">
+        <div className="mt-16 text-center opacity-0 animate-fadeIn animation-delay-1600">
           <a 
             href="#early-access" 
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-1"
+            className="btn-glow inline-flex items-center gap-2 px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all shadow-md hover:shadow-violet-500/40 transform hover:-translate-y-1"
           >
             Start Building Your Product
             <Rocket size={16} />
