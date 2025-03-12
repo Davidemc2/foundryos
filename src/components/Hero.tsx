@@ -1,4 +1,3 @@
-
 import { ArrowRight, MessageSquare, LayoutList, Code, Rocket } from "lucide-react";
 
 const Hero = () => {
@@ -52,10 +51,10 @@ const Hero = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-1000">
             <a 
-              href="#early-access" 
+              href="/early-access" 
               className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg animate-bounce-subtle"
             >
-              Request Early Access
+              Get Early Access
               <ArrowRight size={16} />
             </a>
             
@@ -66,7 +65,6 @@ const Hero = () => {
               See How It Works
             </a>
           </div>
-        </div>
 
         {/* Visual Journey - 4-step process with enhanced animations */}
         <div className="mt-24 white-card p-8 opacity-0 animate-slideUp animation-delay-1200 shadow-xl">

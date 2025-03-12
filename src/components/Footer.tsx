@@ -14,10 +14,10 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 text-sm text-muted-foreground">
             <a href="#" className="hover:text-violet-400 transition-colors">Terms</a>
             <a href="#" className="hover:text-violet-400 transition-colors">Privacy</a>
-            <a href="mailto:contact@aibuilder.example.com" className="hover:text-violet-400 transition-colors">
-              contact@aibuilder.example.com
+            <a href="mailto:daviedwards.mc2@gmail.com" className="hover:text-violet-400 transition-colors">
+              daviedwards.mc2@gmail.com
             </a>
-            <p>© {currentYear} AIBuilder. All rights reserved.</p>
+            <p>© {currentYear} Foundry OS. All rights reserved.</p>
           </div>
         </div>
       </div>
