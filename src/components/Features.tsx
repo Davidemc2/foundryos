@@ -1,5 +1,5 @@
 
-import { ArrowRight, Code, Rocket, Users, X, Check, AlertTriangle, GitMerge, RefreshCcw, Layers, Bug } from "lucide-react";
+import { ArrowRight, Code, Rocket, Users, X, Check, AlertTriangle, GitMerge, RefreshCcw, Layers, Bug, BarChart, Zap, Cloud, Terminal } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const FeatureSection = ({ 
@@ -194,83 +194,42 @@ const Features = () => {
         description="A complete AI project manager that turns your idea into a finished product without the manual work."
         bgClass="section-dark"
       >
-        <div className="space-y-16">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1">
-              <h3 className="heading-sm mb-4">End-to-End Development</h3>
-              <p className="text-muted-foreground mb-6">
-                Our AI takes your product idea and manages the entire development process, from breaking down tasks to executing them with Lovable.dev, to testing and deployment.
-              </p>
-              
-              <ul className="space-y-4">
-                {[
-                  "Breaks down your idea into comprehensive tasks",
-                  "Executes each task with precise context",
-                  "Builds complete, production-ready applications",
-                  "Tests functionality and catches edge cases",
-                  "Deploys your finished product to production"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-900/50 text-green-400 flex items-center justify-center mr-3 mt-0.5">
-                      <Check size={14} className="stroke-[3]" />
-                    </div>
-                    <p className="text-gray-300">{item}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="order-1 md:order-2">
-              <div className="glass-card rounded-xl p-1 md:p-2 shadow-lg border border-violet-900/20">
-                <img 
-                  src="https://placehold.co/800x600/1e1e1e/9b87f5?text=Product+Development+Flow"
-                  alt="Product Development Flow"
-                  className="w-full h-auto rounded-lg opacity-90"
-                />
+        {/* New Feature-Benefit Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              icon: Terminal,
+              title: "Smart Task Breakdown",
+              benefit: "Your idea is automatically split into actionable development tasks"
+            },
+            {
+              icon: Zap,
+              title: "Automated Development",
+              benefit: "AI builds your entire codebase without manual coding or debugging"
+            },
+            {
+              icon: Cloud,
+              title: "Seamless Integration",
+              benefit: "All components are connected and work together out of the box"
+            },
+            {
+              icon: BarChart,
+              title: "Continuous Improvement",
+              benefit: "AI iterates based on your feedback until your product is perfect"
+            }
+          ].map((feature, i) => (
+            <div 
+              key={i}
+              className="flex flex-col glass-card p-6 rounded-xl border border-violet-800/30 opacity-0 animate-slideUp"
+              style={{ animationDelay: `${i * 150}ms` }}
+            >
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-violet-900/80 text-violet-200 flex items-center justify-center mb-4">
+                <feature.icon size={24} />
               </div>
+              <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+              <p className="text-gray-300 text-sm">{feature.benefit}</p>
             </div>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="glass-card rounded-xl p-1 md:p-2 shadow-lg border border-violet-900/20">
-                <img 
-                  src="https://placehold.co/800x600/1e1e1e/9b87f5?text=Idea+to+Launch"
-                  alt="Idea to Launch Process"
-                  className="w-full h-auto rounded-lg opacity-90"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="heading-sm mb-4">Continuous Iteration</h3>
-              <p className="text-muted-foreground mb-6">
-                Our AI doesn't just build once. It iterates based on your feedback, constantly improving your product until it's exactly what you envisioned.
-              </p>
-              
-              <div className="space-y-6">
-                {[
-                  {
-                    title: "Feedback Loop",
-                    description: "Provide feedback and watch as the AI makes targeted improvements."
-                  },
-                  {
-                    title: "Intelligent Iteration",
-                    description: "The AI learns from each feedback cycle, making better decisions over time."
-                  },
-                  {
-                    title: "Progress Tracking",
-                    description: "Track your product's development with clear metrics and milestones."
-                  }
-                ].map((item, i) => (
-                  <div key={i}>
-                    <h4 className="font-semibold text-lg mb-1 text-violet-300">{item.title}</h4>
-                    <p className="text-muted-foreground">{item.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </FeatureSection>
     </>
