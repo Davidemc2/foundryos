@@ -41,7 +41,7 @@ const EarlyAccessConfirmation = () => {
             </p>
             
             <a 
-              href="https://yourcompany.typeform.com/pledge-support" 
+              href="https://form.typeform.com/to/qIqMaEXU" 
               target="_blank" 
               rel="noopener noreferrer"
               className="btn-glow w-full px-6 py-4 rounded-xl bg-violet-700 text-white font-bold 

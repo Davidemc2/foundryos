@@ -53,7 +53,7 @@ const EarlyAccess = () => {
         
         <div className="max-w-md mx-auto">
           <a 
-            href="https://form.typeform.com/to/xxxx" 
+            href="https://form.typeform.com/to/qIqMaEXU" 
             className="btn-glow w-full px-8 py-4 rounded-xl bg-white text-violet-800 font-bold 
             hover:bg-violet-100 transition-all flex items-center justify-center gap-2 shadow-lg 
             hover:shadow-white/40 transform hover:-translate-y-1 hover:scale-105 text-lg"
