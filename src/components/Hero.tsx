@@ -38,8 +38,10 @@ const Hero = () => {
               <span className="block opacity-0 animate-fadeIn animation-delay-400">
                 From Prompt to Product. 
               </span>
-              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-violet-600 opacity-0 animate-fadeIn animation-delay-600">
-                No Coding. No Team. No Delay.
+              <span className="typewriter-container block mt-2">
+                <span className="typewriter-text text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-violet-600">
+                  No Coding. No Team. No Delay.
+                </span>
               </span>
             </h1>
           </div>
@@ -51,7 +53,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-1000">
             <a 
               href="#early-access" 
-              className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg"
+              className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg animate-bounce-subtle"
             >
               Request Early Access
               <ArrowRight size={16} />
@@ -59,7 +61,7 @@ const Hero = () => {
             
             <a 
               href="#how-it-works" 
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-200 font-medium hover:bg-gray-700 transition-all"
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-200 font-medium hover:bg-gray-700 transition-all transform hover:scale-105"
             >
               See How It Works
             </a>

@@ -145,6 +145,10 @@ export default {
         "bounce": {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-5px)" }
+        },
+        "bounce-subtle": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-3px)" }
         }
       },
       animation: {
@@ -162,7 +166,8 @@ export default {
         "orbit": "orbit 10s linear infinite",
         "orbit-slow": "orbit 15s linear infinite",
         "orbit-reverse": "orbit 12s linear infinite reverse",
-        "bounce": "bounce 2s ease-in-out infinite"
+        "bounce": "bounce 2s ease-in-out infinite",
+        "bounce-subtle": "bounce-subtle 2s ease-in-out infinite"
       },
     },
   },

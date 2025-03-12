@@ -82,6 +82,34 @@ const HowItWorks = () => {
           </p>
         </div>
         
+        {/* Process diagram - Animated horizontal timeline */}
+        <div className="mb-16 hidden md:block">
+          <div className="relative">
+            <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
+            <div className="flex justify-between items-center relative z-10">
+              {steps.map((step, index) => (
+                <div 
+                  key={step.id} 
+                  className="flex flex-col items-center opacity-0 animate-fadeIn"
+                  style={{ animationDelay: `${index * 300}ms` }}
+                >
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 ${
+                    step.color === 'violet' ? 'bg-violet-100 text-violet-700' :
+                    step.color === 'green' ? 'bg-green-100 text-green-700' :
+                    step.color === 'purple' ? 'bg-purple-100 text-purple-700' :
+                    'bg-orange-100 text-orange-700'
+                  } hover:scale-110 transition-transform bg-white`}>
+                    <step.icon size={28} />
+                  </div>
+                  <span className="bg-white px-3 py-1 rounded-full text-sm font-semibold text-gray-700">
+                    Step {step.id}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {steps.map((step, index) => (
             <div 
