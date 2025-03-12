@@ -1,4 +1,3 @@
-
 import { useRef, useEffect } from "react";
 import { MessageSquare, Code, LayoutList, Rocket } from "lucide-react";
 
@@ -68,11 +67,11 @@ const HowItWorks = () => {
     <section 
       id="how-it-works" 
       ref={sectionRef}
-      className="section-light py-20 md:py-28 opacity-0 transition-opacity duration-1000 ease-out relative"
+      className="section-light py-12 md:py-16 opacity-0 transition-opacity duration-1000 ease-out relative"
     >
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_50%_at_50%_50%,rgba(139,92,246,0.1)_0%,transparent_100%)]" />
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-12">
           <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-violet-100 text-violet-700 mb-6">
             The Process
           </span>
@@ -83,7 +82,7 @@ const HowItWorks = () => {
         </div>
         
         {/* Process diagram - Animated horizontal timeline */}
-        <div className="mb-16 hidden md:block">
+        <div className="mb-12 hidden md:block">
           <div className="relative">
             <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
             <div className="flex justify-between items-center relative z-10">
@@ -143,7 +142,7 @@ const HowItWorks = () => {
           ))}
         </div>
         
-        <div className="mt-16 text-center opacity-0 animate-fadeIn animation-delay-1600">
+        <div className="mt-12 text-center opacity-0 animate-fadeIn animation-delay-1600">
           <a 
             href="#early-access" 
             className="btn-glow inline-flex items-center gap-2 px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all shadow-md hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105"
