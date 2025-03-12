@@ -141,6 +141,10 @@ export default {
         "orbit": {
           "0%": { transform: "rotate(0deg) translateX(10px) rotate(0deg)" },
           "100%": { transform: "rotate(360deg) translateX(10px) rotate(-360deg)" }
+        },
+        "bounce": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" }
         }
       },
       animation: {
@@ -157,7 +161,8 @@ export default {
         "float-slow": "float 8s ease-in-out infinite",
         "orbit": "orbit 10s linear infinite",
         "orbit-slow": "orbit 15s linear infinite",
-        "orbit-reverse": "orbit 12s linear infinite reverse"
+        "orbit-reverse": "orbit 12s linear infinite reverse",
+        "bounce": "bounce 2s ease-in-out infinite"
       },
     },
   },

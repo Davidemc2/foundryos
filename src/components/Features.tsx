@@ -1,5 +1,5 @@
 
-import { ArrowRight, Code, Rocket, Users, X, Check } from "lucide-react";
+import { ArrowRight, Code, Rocket, Users, X, Check, AlertTriangle, GitMerge, RefreshCcw, LayersLinked, Bug } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const FeatureSection = ({ 
@@ -117,25 +117,44 @@ const Features = () => {
           bgClass="section-light"
         >
           <div className="grid md:grid-cols-2 gap-12 items-stretch">
-            <div className="dark-glass-card rounded-xl p-6 border border-gray-200/50">
-              <h3 className="heading-sm mb-4 text-center text-red-500">The Problem</h3>
-              <p className="text-gray-700 mb-6 text-center font-medium">
+            <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 hover:scale-[1.01]">
+              <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center text-red-500">The Problem</h3>
+              <p className="text-gray-700 mb-8 text-center font-medium">
                 AI tools don't manage projects. No-code is still manual. Time is wasted.
               </p>
               
-              <ul className="space-y-4">
+              <ul className="space-y-5">
                 {[
-                  "AI tools generate code snippets, not full applications",
-                  "Manual integration between different parts of your product",
-                  "Limited context leads to inconsistent development",
-                  "No continuous iteration based on feedback",
-                  "Building a real product requires dozens of manual steps"
+                  {
+                    icon: AlertTriangle,
+                    text: "AI tools generate code snippets, not full applications"
+                  },
+                  {
+                    icon: GitMerge,
+                    text: "Manual integration between different parts of your product"
+                  },
+                  {
+                    icon: RefreshCcw,
+                    text: "Limited context leads to inconsistent development"
+                  },
+                  {
+                    icon: LayersLinked,
+                    text: "No continuous iteration based on feedback"
+                  },
+                  {
+                    icon: Bug,
+                    text: "Building a real product requires dozens of manual steps"
+                  }
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 text-red-500 flex items-center justify-center mr-3 mt-0.5">
-                      <X size={14} className="stroke-[3]" />
+                  <li 
+                    key={i} 
+                    className="problem-item flex items-start opacity-0 animate-fadeIn"
+                    style={{ animationDelay: `${i * 200}ms` }}
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center mr-4 mt-0.5 hover:scale-110 transition-transform">
+                      <item.icon size={20} className="stroke-[2.5]" />
                     </div>
-                    <p className="text-gray-700">{item}</p>
+                    <p className="text-gray-700 text-lg">{item.text}</p>
                   </li>
                 ))}
               </ul>

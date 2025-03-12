@@ -87,7 +87,7 @@ const HowItWorks = () => {
             <div 
               key={step.id}
               className="white-card rounded-xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] opacity-0 animate-slideUp"
-              style={{ animationDelay: `${800 + index * 200}ms` }}
+              style={{ animationDelay: `${500 + index * 300}ms` }}
             >
               <div className={`flex items-center mb-4 gap-4`}>
                 <div className={`w-12 h-12 rounded-xl ${
@@ -95,7 +95,7 @@ const HowItWorks = () => {
                   step.color === 'green' ? 'bg-green-100 text-green-700' :
                   step.color === 'purple' ? 'bg-purple-100 text-purple-700' :
                   'bg-orange-100 text-orange-700'
-                } flex items-center justify-center flex-shrink-0`}>
+                } flex items-center justify-center flex-shrink-0 hover:scale-110 transition-transform`}>
                   <step.icon size={24} />
                 </div>
                 <div>
