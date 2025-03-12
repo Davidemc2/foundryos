@@ -74,10 +74,11 @@ const ProblemSolutionSection = () => {
     >
       <div className="grid md:grid-cols-2 gap-12 items-stretch">
         <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-3">
             <AlertTriangle size={32} className="text-red-500" />
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-center text-[#ea384c]">The Problem</h3>
+          <h3 className="text-2xl md:text-3xl font-bold mb-2 text-center text-[#ea384c]">The Problem</h3>
+          <p className="text-violet-600 font-medium text-lg mb-4 text-center">Current Development Challenges</p>
           <p className="text-gray-700 mb-8 text-center font-medium">
             AI tools don't manage projects. No-code is still manual. Time is wasted.
           </p>
@@ -90,10 +91,11 @@ const ProblemSolutionSection = () => {
         </div>
         
         <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-3">
             <Check size={32} className="text-green-500" />
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-center text-green-500">The Solution</h3>
+          <h3 className="text-2xl md:text-3xl font-bold mb-2 text-center text-green-500">The Solution</h3>
+          <p className="text-violet-600 font-medium text-lg mb-4 text-center">Our Approach to Building</p>
           <p className="text-gray-700 mb-8 text-center font-medium">
             An artificial intelligence project manager that builds for you, from start to finish.
           </p>
