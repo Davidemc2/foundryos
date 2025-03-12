@@ -1,5 +1,5 @@
 
-import { ArrowRight, Code, Rocket, Users, X, Check, AlertTriangle, GitMerge, RefreshCcw, LayersLinked, Bug } from "lucide-react";
+import { ArrowRight, Code, Rocket, Users, X, Check, AlertTriangle, GitMerge, RefreshCcw, Layers, Bug } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const FeatureSection = ({ 
@@ -138,7 +138,7 @@ const Features = () => {
                     text: "Limited context leads to inconsistent development"
                   },
                   {
-                    icon: LayersLinked,
+                    icon: Layers,
                     text: "No continuous iteration based on feedback"
                   },
                   {
