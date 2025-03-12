@@ -10,9 +10,7 @@ const Features = () => {
       <div className="section-light">
         <ProblemSolutionSection />
       </div>
-      <div className="section-light">
-        <SolutionSection />
-      </div>
+      <SolutionSection />
     </>
   );
 };
