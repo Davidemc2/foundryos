@@ -20,6 +20,18 @@ const ProblemItem = ({ icon: Icon, text, index }: ProblemItemProps) => (
   </li>
 );
 
+const SolutionItem = ({ text, index }: { text: string; index: number }) => (
+  <li 
+    className="problem-item flex items-start opacity-0 animate-fadeIn"
+    style={{ animationDelay: `${index * 200}ms` }}
+  >
+    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 text-green-500 flex items-center justify-center mr-4 mt-0.5 hover:scale-110 transition-transform">
+      <Check size={20} className="stroke-[2.5]" />
+    </div>
+    <p className="text-gray-700 text-lg">{text}</p>
+  </li>
+);
+
 const ProblemSolutionSection = () => {
   const problemItems = [
     {
@@ -77,20 +89,18 @@ const ProblemSolutionSection = () => {
           </ul>
         </div>
         
-        <div className="dark-glass-card rounded-xl p-6 border border-gray-200/50">
-          <h3 className="heading-sm mb-4 text-center text-green-500">The Solution</h3>
-          <p className="text-gray-700 mb-6 text-center font-medium">
+        <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
+          <div className="flex justify-center mb-4">
+            <Check size={32} className="text-green-500" />
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-center text-green-500">The Solution</h3>
+          <p className="text-gray-700 mb-8 text-center font-medium">
             An artificial intelligence project manager that builds for you, from start to finish.
           </p>
           
-          <ul className="space-y-4">
+          <ul className="space-y-5">
             {solutionItems.map((item, i) => (
-              <li key={i} className="flex items-start">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-500 flex items-center justify-center mr-3 mt-0.5">
-                  <Check size={14} className="stroke-[3]" />
-                </div>
-                <p className="text-gray-700">{item}</p>
-              </li>
+              <SolutionItem key={i} text={item} index={i} />
             ))}
           </ul>
         </div>
