@@ -36,11 +36,11 @@ const ProblemSolutionSection = () => {
     },
     {
       icon: Layers,
-      text: "No continuous iteration based on feedback"
+      text: "Building a real product requires dozens of manual steps"
     },
     {
       icon: Bug,
-      text: "Building a real product requires dozens of manual steps"
+      text: "No continuous iteration based on feedback"
     }
   ];
 
