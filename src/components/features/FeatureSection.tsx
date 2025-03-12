@@ -3,9 +3,9 @@ import { useEffect, useRef } from "react";
 
 interface FeatureSectionProps {
   id: string;
-  icon: any;
+  icon?: any; // Make icon optional
   title: string;
-  description: string;
+  description?: string; // Make description optional
   children: React.ReactNode;
   bgClass?: string;
 }
@@ -53,11 +53,13 @@ const FeatureSection = ({
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,hsl(var(--primary)/0.08)_0%,transparent_100%)]" />
       <div className="container-custom">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-violet-900/80 text-violet-200 mb-6">
-            <Icon size={24} />
-          </div>
+          {Icon && (
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-violet-900/80 text-violet-200 mb-6">
+              <Icon size={24} />
+            </div>
+          )}
           <h2 className="heading-lg mb-4">{title}</h2>
-          <p className="text-lg text-muted-foreground">{description}</p>
+          {description && <p className="text-lg text-muted-foreground">{description}</p>}
         </div>
         
         {children}

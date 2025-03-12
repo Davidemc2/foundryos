@@ -67,9 +67,7 @@ const ProblemSolutionSection = () => {
   return (
     <FeatureSection
       id="problem"
-      icon={AlertTriangle}
-      title="The Problem vs The Solution"
-      description="AI tools and no-code builders still require significant manual effort."
+      title="AI tools and no-code builders still require significant manual effort."
       bgClass="section-light"
     >
       <div className="grid md:grid-cols-2 gap-12 items-stretch">
