@@ -1,3 +1,4 @@
+
 import { ArrowRight, MessageSquare, LayoutList, Code, Rocket } from "lucide-react";
 
 const Hero = () => {
@@ -65,6 +66,7 @@ const Hero = () => {
               See How It Works
             </a>
           </div>
+        </div>
 
         {/* Visual Journey - 4-step process with enhanced animations */}
         <div className="mt-24 white-card p-8 opacity-0 animate-slideUp animation-delay-1200 shadow-xl">
