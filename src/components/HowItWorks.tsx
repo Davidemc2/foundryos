@@ -6,15 +6,15 @@ const steps = [
   {
     id: 1,
     icon: MessageSquare,
-    title: "Prompt",
+    title: "Write a Prompt",
     description: "Describe your product idea in natural language, just like you'd explain it to a colleague.",
     example: "\"I need a project management app with task boards, time tracking, and team collaboration.\"",
-    color: "blue"
+    color: "violet"
   },
   {
     id: 2,
     icon: LayoutList,
-    title: "Plan",
+    title: "Tasks Get Broken Down",
     description: "The AI breaks down your idea into comprehensive tasks and creates a detailed development plan.",
     example: "AI: \"I'll build user authentication, task board UI, backend APIs, and real-time collaboration...\"",
     color: "green"
@@ -22,7 +22,7 @@ const steps = [
   {
     id: 3,
     icon: Code,
-    title: "Build",
+    title: "App Is Built",
     description: "Our AI executes each task with Lovable.dev, building a complete, working application.",
     example: "The AI writes code, tests functionality, and constantly improves based on your feedback.",
     color: "purple"
@@ -30,7 +30,7 @@ const steps = [
   {
     id: 4,
     icon: Rocket,
-    title: "Launch",
+    title: "Launch & Iterate",
     description: "Your finished product is deployed and ready to use. Iterate, improve, and scale as needed.",
     example: "Access your new app immediately and start using it – or request changes and improvements.",
     color: "orange"
@@ -68,11 +68,11 @@ const HowItWorks = () => {
     <section 
       id="how-it-works" 
       ref={sectionRef}
-      className="py-20 md:py-28 bg-gradient-to-b from-white to-blue-50/50 opacity-0 transition-opacity duration-1000 ease-out"
+      className="py-20 md:py-28 bg-gradient-to-b from-white to-violet-50/50 opacity-0 transition-opacity duration-1000 ease-out"
     >
       <div className="container-custom">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700 mb-6">
+          <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-violet-50 text-violet-700 mb-6">
             The Process
           </span>
           <h2 className="heading-lg mb-4">How It Works</h2>
@@ -88,7 +88,12 @@ const HowItWorks = () => {
               className="glass-card rounded-xl p-6 hover:shadow-md transition-all group"
             >
               <div className={`flex items-center mb-4 gap-4`}>
-                <div className={`w-12 h-12 rounded-xl bg-${step.color}-100 text-${step.color}-600 flex items-center justify-center flex-shrink-0`}>
+                <div className={`w-12 h-12 rounded-xl ${
+                  step.color === 'violet' ? 'bg-violet-100 text-violet-600' :
+                  step.color === 'green' ? 'bg-green-100 text-green-600' :
+                  step.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                  'bg-orange-100 text-orange-600'
+                } flex items-center justify-center flex-shrink-0`}>
                   <step.icon size={24} />
                 </div>
                 <div>
@@ -111,7 +116,7 @@ const HowItWorks = () => {
         <div className="mt-16 text-center">
           <a 
             href="#early-access" 
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-blue-700 text-white font-medium hover:bg-blue-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-1"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-1"
           >
             Start Building Your Product
             <Rocket size={16} />

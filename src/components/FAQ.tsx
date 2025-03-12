@@ -57,7 +57,7 @@ const FAQ = () => {
     <section 
       id="faq" 
       ref={sectionRef}
-      className="py-20 opacity-0 transition-opacity duration-1000 ease-out"
+      className="py-20 opacity-0 transition-opacity duration-1000 ease-out bg-violet-50/40"
     >
       <div className="container-custom max-w-4xl">
         <div className="text-center mb-12">
@@ -80,7 +80,7 @@ const FAQ = () => {
                 <h3 className="font-medium text-lg">{faq.question}</h3>
                 <div className="flex-shrink-0 ml-4">
                   {openIndex === index ? (
-                    <Minus size={18} className="text-blue-600" />
+                    <Minus size={18} className="text-violet-600" />
                   ) : (
                     <Plus size={18} className="text-gray-400" />
                   )}

@@ -43,25 +43,25 @@ const Navbar = () => {
           href="#" 
           className="text-xl font-bold text-foreground flex items-center gap-2 z-50"
         >
-          <span className="text-blue-600 text-2xl">●</span>
+          <span className="text-violet-600 text-2xl">●</span>
           AIBuilder
         </a>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#who" className="text-sm font-medium text-foreground/80 hover:text-blue-600 transition-colors">
+          <a href="#who" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
             Who it's for
           </a>
-          <a href="#problem" className="text-sm font-medium text-foreground/80 hover:text-blue-600 transition-colors">
+          <a href="#problem" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
             The Problem
           </a>
-          <a href="#solution" className="text-sm font-medium text-foreground/80 hover:text-blue-600 transition-colors">
+          <a href="#solution" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
             Our Solution
           </a>
-          <a href="#how-it-works" className="text-sm font-medium text-foreground/80 hover:text-blue-600 transition-colors">
+          <a href="#how-it-works" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
             How It Works
           </a>
-          <a href="#faq" className="text-sm font-medium text-foreground/80 hover:text-blue-600 transition-colors">
+          <a href="#faq" className="text-sm font-medium text-foreground/80 hover:text-violet-600 transition-colors">
             FAQ
           </a>
         </nav>
@@ -69,7 +69,7 @@ const Navbar = () => {
         {/* CTA Button */}
         <a
           href="#early-access"
-          className="hidden md:flex px-4 py-2 rounded-full text-sm font-medium bg-blue-700 text-white hover:bg-blue-800 transition-all shadow-sm hover:shadow-md"
+          className="hidden md:flex px-4 py-2 rounded-full text-sm font-medium bg-violet-700 text-white hover:bg-violet-800 transition-all shadow-sm hover:shadow-md"
         >
           Request Early Access
         </a>
@@ -88,42 +88,42 @@ const Navbar = () => {
           <div className="flex flex-col items-center justify-center h-full gap-8 text-center">
             <a 
               href="#who" 
-              className="text-lg font-medium text-foreground/80 hover:text-blue-600 transition-colors"
+              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
               onClick={closeMobileMenu}
             >
               Who it's for
             </a>
             <a 
               href="#problem" 
-              className="text-lg font-medium text-foreground/80 hover:text-blue-600 transition-colors"
+              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
               onClick={closeMobileMenu}
             >
               The Problem
             </a>
             <a 
               href="#solution" 
-              className="text-lg font-medium text-foreground/80 hover:text-blue-600 transition-colors"
+              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
               onClick={closeMobileMenu}
             >
               Our Solution
             </a>
             <a 
               href="#how-it-works" 
-              className="text-lg font-medium text-foreground/80 hover:text-blue-600 transition-colors"
+              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
               onClick={closeMobileMenu}
             >
               How It Works
             </a>
             <a 
               href="#faq" 
-              className="text-lg font-medium text-foreground/80 hover:text-blue-600 transition-colors"
+              className="text-lg font-medium text-foreground/80 hover:text-violet-600 transition-colors"
               onClick={closeMobileMenu}
             >
               FAQ
             </a>
             <a
               href="#early-access"
-              className="px-6 py-3 rounded-full text-base font-medium bg-blue-700 text-white hover:bg-blue-800 transition-colors mt-4"
+              className="px-6 py-3 rounded-full text-base font-medium bg-violet-700 text-white hover:bg-violet-800 transition-colors mt-4"
               onClick={closeMobileMenu}
             >
               Request Early Access

@@ -7,14 +7,14 @@ const Footer = () => {
       <div className="container-custom">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-6 md:mb-0">
-            <span className="text-blue-600 text-2xl mr-2">●</span>
+            <span className="text-violet-600 text-2xl mr-2">●</span>
             <span className="text-lg font-bold">AIBuilder</span>
           </div>
           
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-blue-600 transition-colors">Terms</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Privacy</a>
-            <a href="mailto:contact@aibuilder.example.com" className="hover:text-blue-600 transition-colors">
+            <a href="#" className="hover:text-violet-600 transition-colors">Terms</a>
+            <a href="#" className="hover:text-violet-600 transition-colors">Privacy</a>
+            <a href="mailto:contact@aibuilder.example.com" className="hover:text-violet-600 transition-colors">
               contact@aibuilder.example.com
             </a>
             <p>© {currentYear} AIBuilder. All rights reserved.</p>
