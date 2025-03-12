@@ -24,29 +24,51 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-800">
             <a 
               href="#early-access" 
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-blue-700 text-white font-medium hover:bg-blue-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
-              Join Early Access
+              Request Early Access
               <ArrowRight size={16} />
             </a>
             
             <a 
-              href="#who" 
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-800 font-medium hover:bg-gray-50 transition-colors"
+              href="#how-it-works" 
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-800 font-medium hover:bg-gray-50 transition-all"
             >
-              Learn More
+              See How It Works
             </a>
           </div>
         </div>
 
         <div className="relative mt-16 md:mt-24 opacity-0 animate-slideUp animation-delay-800">
           <div className="glass-card rounded-2xl p-1 md:p-2 shadow-xl">
-            <div className="bg-gray-800 rounded-xl overflow-hidden">
-              <img 
-                src="https://placehold.co/1200x600/1f2937/fff?text=AI+Building+Your+App"
-                alt="AI Building Your App"
-                className="w-full h-auto object-cover"
-              />
+            <div className="bg-white rounded-xl overflow-hidden p-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
+                <div className="flex-1 flex flex-col items-center text-center md:text-left md:items-start">
+                  <div className="bg-blue-100 text-blue-700 w-10 h-10 rounded-full flex items-center justify-center mb-3">1</div>
+                  <h3 className="font-medium mb-1">Prompt</h3>
+                  <p className="text-sm text-gray-600">Describe your idea in natural language</p>
+                </div>
+                
+                <div className="hidden md:block text-gray-300">
+                  <ArrowRight size={24} />
+                </div>
+                
+                <div className="flex-1 flex flex-col items-center text-center">
+                  <div className="bg-green-100 text-green-700 w-10 h-10 rounded-full flex items-center justify-center mb-3">2</div>
+                  <h3 className="font-medium mb-1">Task Breakdown</h3>
+                  <p className="text-sm text-gray-600">AI plans development steps</p>
+                </div>
+                
+                <div className="hidden md:block text-gray-300">
+                  <ArrowRight size={24} />
+                </div>
+                
+                <div className="flex-1 flex flex-col items-center text-center md:text-right md:items-end">
+                  <div className="bg-purple-100 text-purple-700 w-10 h-10 rounded-full flex items-center justify-center mb-3">3</div>
+                  <h3 className="font-medium mb-1">App Creation</h3>
+                  <p className="text-sm text-gray-600">Built with Lovable.dev and launched</p>
+                </div>
+              </div>
             </div>
           </div>
           

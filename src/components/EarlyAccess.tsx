@@ -1,5 +1,6 @@
 
 import { useRef, useEffect } from "react";
+import { Rocket } from "lucide-react";
 
 const EarlyAccess = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -54,9 +55,10 @@ const EarlyAccess = () => {
               href="https://yourcompany.typeform.com/early-access" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full px-8 py-4 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg text-lg"
+              className="w-full px-8 py-4 rounded-xl bg-blue-700 text-white font-medium hover:bg-blue-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-lg"
             >
-              Join Early Access Waitlist
+              Request Early Access
+              <Rocket size={20} />
             </a>
             
             <p className="text-sm text-muted-foreground mt-4">
