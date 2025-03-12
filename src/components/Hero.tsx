@@ -1,9 +1,6 @@
-
 import { ArrowRight, MessageSquare, LayoutList, Code, Rocket } from "lucide-react";
-
 const Hero = () => {
-  return (
-    <section className="section-dark pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+  return <section className="section-dark pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden py-[100px]">
       {/* Enhanced floating elements */}
       <div className="floating-element top-20 left-20 w-[300px] h-[300px] animate-float"></div>
       <div className="floating-element bottom-20 right-20 w-[400px] h-[400px] animate-float-slow animation-delay-800"></div>
@@ -51,18 +48,12 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-1000">
-            <a 
-              href="https://form.typeform.com/to/qIqMaEXU" 
-              className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg animate-bounce-subtle"
-            >
+            <a href="https://form.typeform.com/to/qIqMaEXU" className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg animate-bounce-subtle">
               Get Early Access
               <ArrowRight size={16} />
             </a>
             
-            <a 
-              href="#how-it-works" 
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-200 font-medium hover:bg-gray-700 transition-all transform hover:scale-105"
-            >
+            <a href="#how-it-works" className="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-200 font-medium hover:bg-gray-700 transition-all transform hover:scale-105">
               See How It Works
             </a>
           </div>
@@ -106,8 +97,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
