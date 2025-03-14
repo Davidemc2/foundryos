@@ -7,9 +7,7 @@ const Features = () => {
   return (
     <>
       <AudienceSection />
-      <div className="section-light">
-        <ProblemSolutionSection />
-      </div>
+      <ProblemSolutionSection />
       <SolutionSection />
     </>
   );

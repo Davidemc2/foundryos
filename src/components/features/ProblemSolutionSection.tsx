@@ -80,49 +80,51 @@ const ProblemSolutionSection = () => {
   ];
 
   return (
-    <FeatureSection
-      id="problem"
-      title="Transform Your Development Process"
-      description="AI tools and no-code builders still require significant manual effort."
-      bgClass="section-light"
-    >
-      <div className="flex justify-center mb-8">
+    <div className="py-10">
+      <div className="flex justify-center mb-2">
         <div 
           ref={rocketRef}
-          className="w-24 h-24 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center opacity-0 transition-all duration-1000 shadow-lg shadow-violet-200/50 hover:shadow-violet-300/50"
+          className="w-20 h-20 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center opacity-0 transition-all duration-1000 shadow-lg shadow-violet-200/50 hover:shadow-violet-300/50"
         >
-          <Rocket size={40} className="stroke-[1.5] transform -rotate-45 animate-bounce-subtle" />
+          <Rocket size={32} className="stroke-[1.5] transform -rotate-45 animate-bounce-subtle" />
         </div>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-12 items-stretch">
-        <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
-          <div className="flex justify-center mb-3">
-            <AlertTriangle size={32} className="text-red-500" />
+      <FeatureSection
+        id="problem"
+        title="Transform Your Development Process"
+        description="AI tools and no-code builders still require significant manual effort."
+        bgClass="section-light"
+      >
+        <div className="grid md:grid-cols-2 gap-12 items-stretch">
+          <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
+            <div className="flex justify-center mb-3">
+              <AlertTriangle size={32} className="text-red-500" />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#ea384c]">The Problem</h3>
+            
+            <ul className="space-y-5">
+              {problemItems.map((item, i) => (
+                <ProblemItem key={i} icon={item.icon} text={item.text} index={i} />
+              ))}
+            </ul>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#ea384c]">The Problem</h3>
           
-          <ul className="space-y-5">
-            {problemItems.map((item, i) => (
-              <ProblemItem key={i} icon={item.icon} text={item.text} index={i} />
-            ))}
-          </ul>
-        </div>
-        
-        <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
-          <div className="flex justify-center mb-3">
-            <Check size={32} className="text-green-500" />
+          <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
+            <div className="flex justify-center mb-3">
+              <Check size={32} className="text-green-500" />
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center text-green-500">The Solution</h3>
+            
+            <ul className="space-y-5">
+              {solutionItems.map((item, i) => (
+                <SolutionItem key={i} text={item} index={i} />
+              ))}
+            </ul>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center text-green-500">The Solution</h3>
-          
-          <ul className="space-y-5">
-            {solutionItems.map((item, i) => (
-              <SolutionItem key={i} text={item} index={i} />
-            ))}
-          </ul>
         </div>
-      </div>
-    </FeatureSection>
+      </FeatureSection>
+    </div>
   );
 };
 
