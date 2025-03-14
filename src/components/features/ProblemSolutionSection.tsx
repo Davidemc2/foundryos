@@ -1,5 +1,5 @@
 
-import { AlertTriangle, GitMerge, RefreshCcw, Layers, Bug, Check } from "lucide-react";
+import { AlertTriangle, GitMerge, RefreshCcw, Layers, Bug, Check, Rocket } from "lucide-react";
 import FeatureSection from "./FeatureSection";
 
 interface ProblemItemProps {
@@ -67,7 +67,9 @@ const ProblemSolutionSection = () => {
   return (
     <FeatureSection
       id="problem"
-      title="AI tools and no-code builders still require significant manual effort."
+      icon={Rocket}
+      title="Transform Your Development Process"
+      description="AI tools and no-code builders still require significant manual effort."
       bgClass="section-light"
     >
       <div className="grid md:grid-cols-2 gap-12 items-stretch">
