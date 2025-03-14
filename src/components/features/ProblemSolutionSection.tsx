@@ -1,6 +1,7 @@
 
 import { AlertTriangle, GitMerge, RefreshCcw, Layers, Bug, Check, Rocket } from "lucide-react";
 import FeatureSection from "./FeatureSection";
+import { useEffect, useRef } from "react";
 
 interface ProblemItemProps {
   icon: any;
@@ -33,6 +34,20 @@ const SolutionItem = ({ text, index }: { text: string; index: number }) => (
 );
 
 const ProblemSolutionSection = () => {
+  const rocketRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    // Add animation class after mount for the rocket icon
+    const timer = setTimeout(() => {
+      if (rocketRef.current) {
+        rocketRef.current.classList.add('animate-float');
+        rocketRef.current.classList.add('opacity-100');
+      }
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const problemItems = [
     {
       icon: AlertTriangle,
@@ -67,11 +82,19 @@ const ProblemSolutionSection = () => {
   return (
     <FeatureSection
       id="problem"
-      icon={Rocket}
       title="Transform Your Development Process"
       description="AI tools and no-code builders still require significant manual effort."
       bgClass="section-light"
     >
+      <div className="flex justify-center mb-8">
+        <div 
+          ref={rocketRef}
+          className="w-24 h-24 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center opacity-0 transition-all duration-1000 shadow-lg shadow-violet-200/50 hover:shadow-violet-300/50"
+        >
+          <Rocket size={40} className="stroke-[1.5] transform -rotate-45 animate-bounce-subtle" />
+        </div>
+      </div>
+      
       <div className="grid md:grid-cols-2 gap-12 items-stretch">
         <div className="white-card rounded-xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 hover:scale-[1.01] bg-gray-50">
           <div className="flex justify-center mb-3">
