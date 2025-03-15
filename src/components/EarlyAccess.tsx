@@ -41,15 +41,51 @@ const EarlyAccess = () => {
             Get Early Access to Foundry OS
           </h2>
           <p className="text-xl text-violet-100 max-w-3xl mx-auto mb-6">
-            Only 200 early builder spots available — secure yours now.
+            Only 1000 early builder spots available — secure yours now.
           </p>
           <p className="text-sm text-violet-200 italic animate-pulse">
             15 builders have submitted ideas this week
           </p>
         </div>
         
-        <div className="flex justify-center">
-          <div className="max-w-lg bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300">
+        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          {/* Left side: Value points */}
+          <div className="bg-violet-800/30 backdrop-blur-sm rounded-xl p-8 border border-white/10">
+            <h3 className="text-2xl font-bold text-white mb-6">Build Your Product Fast</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+                <div>
+                  <p className="text-white font-semibold">Free 7-day build</p>
+                  <p className="text-violet-200 text-sm">Standard build timeline, perfect for most ideas</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+                <div>
+                  <p className="text-white font-semibold">$250 2-day fast build</p>
+                  <p className="text-violet-200 text-sm">Priority processing for urgent projects</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+                <div>
+                  <p className="text-white font-semibold">Unlimited iterations</p>
+                  <p className="text-violet-200 text-sm">Refine your product until it's perfect</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+                <div>
+                  <p className="text-white font-semibold">Full source code ownership</p>
+                  <p className="text-violet-200 text-sm">You own everything Foundry builds for you</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Right side: Email capture */}
+          <div className="bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Secure Your Spot</h3>
               <div className="mb-6">
@@ -61,7 +97,7 @@ const EarlyAccess = () => {
               
               <EmailCapture 
                 className="mb-6"
-                placeholder="Enter your email"
+                placeholder="youremail@example.com"
                 buttonText="Join Now" 
               />
               
