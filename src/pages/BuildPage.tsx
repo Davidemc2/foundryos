@@ -1,21 +1,16 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Send, Mic, Paperclip, FileUp, Mail } from "lucide-react";
+import { ArrowLeft, Send, Mic, Paperclip, FileUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ChatMessage } from "@/components/chat/ChatMessage";
 import { FilePreview } from "@/components/chat/FilePreview";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
-import { MessageResponseContent } from "@/components/chat/MessageResponseContent"; 
 import { BuildEmailForm } from "@/components/chat/BuildEmailForm";
 import { ThankYouCard } from "@/components/chat/ThankYouCard";
 
@@ -32,11 +27,24 @@ interface TaskItem {
   id: number;
   title: string;
   description: string;
+  hours: number;
 }
 
 interface LocationState {
   initialPrompt?: string;
 }
+
+// Chat flow stages
+type ChatStage = 'initial' | 'requirements' | 'scope' | 'tasks' | 'estimate' | 'payment';
+
+const BUILD_STAGES = [
+  { key: 'initial', label: 'Initial Idea' },
+  { key: 'requirements', label: 'Requirements' },
+  { key: 'scope', label: 'Project Scope' },
+  { key: 'tasks', label: 'Task Breakdown' },
+  { key: 'estimate', label: 'Cost Estimate' },
+  { key: 'payment', label: 'Payment' }
+];
 
 const BuildPage = () => {
   const navigate = useNavigate();
@@ -47,32 +55,37 @@ const BuildPage = () => {
   const [inputValue, setInputValue] = useState(state?.initialPrompt || "");
   const [isTyping, setIsTyping] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [currentStage, setCurrentStage] = useState<ChatStage>('initial');
+  const [showThankYou, setShowThankYou] = useState(false);
   const [result, setResult] = useState<{
     scope: string;
     tasks: TaskItem[];
     estimate: { standard: string; fastTrack: string };
+    totalHours: number;
   } | null>(null);
-  const [showThankYou, setShowThankYou] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [currentResponseStep, setCurrentResponseStep] = useState(0);
   
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Calculate current progress
+  const stageIndex = BUILD_STAGES.findIndex(stage => stage.key === currentStage);
+  const progressPercentage = ((stageIndex + 1) / BUILD_STAGES.length) * 100;
 
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isTyping, currentResponseStep]);
+  }, [messages, isTyping]);
 
   // Add initial welcome message
   useEffect(() => {
     const welcomeMessage: Message = {
       id: generateUniqueId(),
       type: "assistant",
-      content: "Hi there! I'm Foundry OS. Describe your app idea, and I'll create a project scope, task breakdown, and cost estimate for you.",
+      content: "Hi there! I'm Foundry OS. Describe your app idea, and I'll help you build it. What would you like to create?",
       timestamp: new Date()
     };
     
@@ -90,7 +103,28 @@ const BuildPage = () => {
     return Date.now().toString(36) + Math.random().toString(36).substring(2);
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const simulateTyping = (message: string, delayMs: number = 500): Promise<void> => {
+    setIsTyping(true);
+    return new Promise(resolve => {
+      setTimeout(() => {
+        setIsTyping(false);
+        resolve();
+      }, delayMs);
+    });
+  };
+
+  const addAssistantMessage = (content: string) => {
+    const newMessage: Message = {
+      id: generateUniqueId(),
+      type: "assistant",
+      content,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, newMessage]);
+    return newMessage.id;
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!inputValue.trim() && uploadedFiles.length === 0) return;
@@ -110,88 +144,158 @@ const BuildPage = () => {
     setUploadedFiles([]);
     setIsTyping(true);
     setHasInteracted(true);
-    setCurrentResponseStep(0);
     
-    // Generate mock data response
-    const mockResult = {
-      scope: `Your ${inputValue.split(" ").slice(0, 3).join(" ")}... app will feature a responsive design with user authentication, data storage, and a clean interface. We'll implement core functionality first, then add advanced features in subsequent iterations.`,
-      tasks: [
-        {
-          id: 1,
-          title: "User Authentication System",
-          description: "Login, signup, password reset flows with secure token-based authentication."
-        },
-        {
-          id: 2, 
-          title: "Core Functionality Implementation",
-          description: "Building the primary features described in your idea, including database integration."
-        },
-        {
-          id: 3,
-          title: "Responsive UI Design",
-          description: "Creating a modern, mobile-first interface that works across all devices."
-        },
-        {
-          id: 4,
-          title: "Testing & QA",
-          description: "Comprehensive testing to ensure functionality works as expected."
-        }
-      ],
-      estimate: {
-        standard: "$0 (7-day)",
-        fastTrack: "$250 (2-day fast track)"
+    // Process based on current stage
+    switch (currentStage) {
+      case 'initial':
+        await processInitialIdea(userMessage.content);
+        break;
+      case 'requirements':
+        await processRequirements(userMessage.content);
+        break;
+      case 'scope':
+        await processScope(userMessage.content);
+        break;
+      case 'tasks':
+        await processTasks(userMessage.content);
+        break;
+      case 'estimate':
+        await processEstimate(userMessage.content);
+        break;
+      default:
+        await simulateTyping("I'm not sure how to process that at this stage. Let's continue with our current discussion.");
+        addAssistantMessage("I'm not sure how to process that at this stage. Let's continue with our current discussion.");
+    }
+  };
+
+  const processInitialIdea = async (userIdea: string) => {
+    // Simulate AI analyzing the idea and asking follow-up questions
+    await simulateTyping("", 1500);
+    
+    const response = `Thanks for sharing your idea! Let me ask a few questions to better understand what you want to build:
+
+1. Who is the primary user of your application?
+2. What are the top 3 most important features?
+3. Do you have any design preferences or existing brand guidelines?
+4. What is your timeline for launching this product?
+
+Feel free to upload any mockups, docs, or references that might help me understand your vision better.`;
+    
+    addAssistantMessage(response);
+    setCurrentStage('requirements');
+  };
+
+  const processRequirements = async (requirements: string) => {
+    await simulateTyping("", 2000);
+    
+    // Generate project scope based on requirements
+    const scopeResponse = `Based on your requirements, here's the proposed project scope:
+
+## Project Overview
+Your app will provide a modern, responsive interface that works across desktop and mobile devices. We'll implement core user flows first, followed by additional features in subsequent iterations.
+
+## Core Features
+- User authentication and profile management
+- Primary functionality you described
+- Data storage and retrieval
+- Modern, responsive UI
+
+Does this scope align with your vision? Would you like to add or modify anything before I break it down into tasks?`;
+
+    addAssistantMessage(scopeResponse);
+    setCurrentStage('scope');
+  };
+
+  const processScope = async (scopeFeedback: string) => {
+    await simulateTyping("", 2500);
+    
+    // Break down into tasks
+    const tasks: TaskItem[] = [
+      {
+        id: 1,
+        title: "User Authentication System",
+        description: "Login, signup, profile management, and password reset flows with secure token-based authentication.",
+        hours: 12
+      },
+      {
+        id: 2, 
+        title: "Core Functionality Implementation",
+        description: "Building the primary features described in your idea, including database integration.",
+        hours: 24
+      },
+      {
+        id: 3,
+        title: "Responsive UI Design",
+        description: "Creating a modern, mobile-first interface that works across all devices.",
+        hours: 16
+      },
+      {
+        id: 4,
+        title: "Testing & QA",
+        description: "Comprehensive testing to ensure functionality works as expected.",
+        hours: 8
       }
-    };
+    ];
     
-    setResult(mockResult);
+    const totalHours = tasks.reduce((sum, task) => sum + task.hours, 0);
     
-    // Show first message after a short delay - PROJECT SCOPE
-    setTimeout(() => {
-      setIsTyping(false);
-      
-      // First message - Project Scope
-      const scopeMessage: Message = {
-        id: generateUniqueId(),
-        type: "assistant",
-        content: `Got it! Here's the scope based on what you shared:\n\n📄 **Project Scope:**\n${mockResult.scope}`,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, scopeMessage]);
-      setCurrentResponseStep(1);
-      setIsTyping(true);
-      
-      // Second message - Task Breakdown after 1.5s
-      setTimeout(() => {
-        setIsTyping(false);
-        
-        const tasksMessage: Message = {
-          id: generateUniqueId(),
-          type: "assistant",
-          content: `To build this, here are the main tasks:\n\n✅ **Task Breakdown:**\n${mockResult.tasks.map(task => `• **${task.title}:** ${task.description}`).join('\n')}`,
-          timestamp: new Date()
-        };
-        
-        setMessages(prev => [...prev, tasksMessage]);
-        setCurrentResponseStep(2);
-        setIsTyping(true);
-        
-        // Third message - Cost Estimate after another 1.5s
-        setTimeout(() => {
-          setIsTyping(false);
-          
-          const costMessage: Message = {
-            id: generateUniqueId(),
-            type: "assistant",
-            content: `💰 **Estimated Cost:**\n${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}`,
-            timestamp: new Date()
-          };
-          
-          setMessages(prev => [...prev, costMessage]);
-          setCurrentResponseStep(3);
-        }, 1500);
-      }, 1500);
-    }, 1000);
+    const tasksMessage = `I've broken down the project into these key tasks:
+
+${tasks.map(task => `## ${task.title} (${task.hours} hours)\n${task.description}`).join('\n\n')}
+
+**Total estimated development hours: ${totalHours}**
+
+Do these tasks cover everything you need? Would you like to add or modify anything?`;
+    
+    addAssistantMessage(tasksMessage);
+    
+    // Store the result
+    setResult({
+      scope: "Your app will provide a modern, responsive interface that works across desktop and mobile devices...",
+      tasks,
+      estimate: {
+        standard: `$${totalHours * 100} (${Math.ceil(totalHours/8)} days)`,
+        fastTrack: `$${totalHours * 150} (${Math.ceil(totalHours/16)} days priority)` 
+      },
+      totalHours
+    });
+    
+    setCurrentStage('tasks');
+  };
+
+  const processTasks = async (tasksFeedback: string) => {
+    await simulateTyping("", 1500);
+    
+    if (!result) return;
+    
+    // Present cost estimate
+    const estimateMessage = `Based on the ${result.totalHours} hours of development work, here are your building options:
+
+## Standard Build
+**${result.estimate.standard}**
+- Full development of all features
+- Regular progress updates
+- Delivery in ${Math.ceil(result.totalHours/8)} days
+
+## Fast-Track Build (Priority)
+**${result.estimate.fastTrack}**
+- Priority development queue
+- Daily progress updates
+- Delivery in ${Math.ceil(result.totalHours/16)} days
+
+Ready to build your product? Enter your email to continue:`;
+    
+    addAssistantMessage(estimateMessage);
+    setCurrentStage('estimate');
+  };
+
+  const processEstimate = async (estimateFeedback: string) => {
+    await simulateTyping("", 1000);
+    
+    const finalMessage = `Thank you for your feedback on the estimate. Please enter your email below to proceed with the build process.`;
+    
+    addAssistantMessage(finalMessage);
+    setCurrentStage('payment');
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,6 +375,18 @@ const BuildPage = () => {
       <div className="flex-1 container-custom py-8">
         <Card className="mx-auto shadow-lg border border-violet-500/20 bg-gray-900 max-w-4xl">
           <CardContent className="p-6">
+            {/* Build progress indicator */}
+            <div className="mb-6">
+              <div className="flex justify-between text-xs text-gray-400 mb-1">
+                {BUILD_STAGES.map((stage, index) => (
+                  <div key={stage.key} className={`${index === stageIndex ? 'text-violet-400 font-medium' : ''}`}>
+                    {stage.label}
+                  </div>
+                ))}
+              </div>
+              <Progress value={progressPercentage} className="h-1 bg-gray-800" />
+            </div>
+            
             <div className="flex flex-col h-[600px]">
               <ScrollArea className="flex-1 pr-4 mb-4" ref={scrollAreaRef}>
                 <div className="space-y-4 pb-2">
@@ -299,11 +415,11 @@ const BuildPage = () => {
                 </div>
               )}
               
-              {result && currentResponseStep === 3 && (
+              {currentStage === 'payment' && result && (
                 <BuildEmailForm onSubmit={handleSendToBuilder} />
               )}
               
-              {(!result || currentResponseStep < 3) && (
+              {currentStage !== 'payment' && (
                 <form 
                   onSubmit={handleSendMessage}
                   onDrop={handleFileDrop}
@@ -333,7 +449,9 @@ const BuildPage = () => {
                     <Input 
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
-                      placeholder="Describe your app idea or upload your scope..."
+                      placeholder={currentStage === 'initial' 
+                        ? "Describe your app idea..." 
+                        : "Type your response..."}
                       className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base bg-transparent text-white"
                     />
                     
