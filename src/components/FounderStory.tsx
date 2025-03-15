@@ -10,8 +10,9 @@ const FounderStory = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   
   const sentences = [
-    "I built this because I was tired of prompting, coding, and still never launching.",
-    "Foundry OS is the product I needed — so I built it for you too."
+    "I built Foundry OS because I was tired of prompting, coding, and still never launching.",
+    "This tool helps you go from an idea in your head to a scoped plan, clear tasks, and a real build — without the mess.",
+    "Foundry OS is the product I needed. So I built it for you too."
   ];
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const FounderStory = () => {
     if (displayText.length < currentQuote.length) {
       const typingTimer = setTimeout(() => {
         setDisplayText(currentQuote.substring(0, displayText.length + 1));
-      }, 50); // Typing speed
+      }, 40); // Slightly faster typing speed
       
       return () => clearTimeout(typingTimer);
     } else {
@@ -54,7 +55,7 @@ const FounderStory = () => {
         const pauseTimer = setTimeout(() => {
           setDisplayText("");
           setCurrentSentence(currentSentence + 1);
-        }, 1500); // Pause between sentences
+        }, 1000); // Shorter pause between sentences for more natural flow
         
         return () => clearTimeout(pauseTimer);
       } else {
@@ -70,14 +71,14 @@ const FounderStory = () => {
 
   return (
     <section 
-      className="py-16 bg-gray-50 dark:bg-gray-900/40"
+      className="py-12 bg-[#F3EAFB]"
       ref={sectionRef}
     >
-      <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="bg-white/10 backdrop-blur-sm dark:bg-gray-800/30 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-800">
-            <div className="h-32 flex items-center justify-center">
-              <div className="font-mono text-xl md:text-2xl text-gray-800 dark:text-gray-200">
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-sm border border-purple-100">
+            <div className="min-h-28 flex items-center justify-center">
+              <div className="font-sans text-xl md:text-2xl text-[#333333]">
                 {currentSentence < sentences.length && (
                   <>
                     <span>{displayText}</span>
@@ -94,12 +95,12 @@ const FounderStory = () => {
             </div>
             
             {showSignature && (
-              <div className="mt-8 flex items-center justify-center space-x-3 opacity-0 animate-fadeIn">
-                <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center text-violet-600 dark:text-violet-400">
+              <div className="mt-6 opacity-0 animate-fadeIn flex items-center justify-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-600">
                   <User size={20} />
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 font-medium">
-                  David Edwards, Founder of Foundry OS
+                <p className="text-[#333333] font-['Dancing_Script',_cursive] text-xl">
+                  – David Edwards, Founder of Foundry OS
                 </p>
               </div>
             )}
