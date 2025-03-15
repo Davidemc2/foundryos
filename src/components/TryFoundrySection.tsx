@@ -1,17 +1,50 @@
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Paperclip, Plus, X } from "lucide-react";
+
+const placeholders = [
+  "I want to build an app that helps creators...",
+  "I need a website for my coaching business...",
+  "I want to create a marketplace for vintage clothes...",
+  "I need a subscription platform for my newsletter..."
+];
 
 const TryFoundrySection = () => {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(placeholders[0]);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Cycling through placeholders with typing animation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIndex = (placeholderIndex + 1) % placeholders.length;
+      setPlaceholderIndex(nextIndex);
+      
+      // Clear and type new placeholder
+      setCurrentPlaceholder("");
+      let i = 0;
+      const typingInterval = setInterval(() => {
+        if (i < placeholders[nextIndex].length) {
+          setCurrentPlaceholder(prev => prev + placeholders[nextIndex].charAt(i));
+          i++;
+        } else {
+          clearInterval(typingInterval);
+        }
+      }, 50); // Typing speed
+      
+      return () => clearInterval(typingInterval);
+    }, 5000); // Change placeholder every 5 seconds
+    
+    return () => clearInterval(interval);
+  }, [placeholderIndex]);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -61,7 +94,7 @@ const TryFoundrySection = () => {
   };
   
   return (
-    <section className="py-16 relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 to-gray-950" />
       
       {/* Animated background effects */}
@@ -70,8 +103,8 @@ const TryFoundrySection = () => {
       <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-violet-500/5 rounded-full blur-3xl animate-pulse-slow animation-delay-1000"></div>
       
       <div className="container-custom">
-        <div className="text-center max-w-3xl mx-auto mb-8">
-          <h2 className="text-2xl md:text-4xl font-bold mb-3">Have an idea? Foundry can build it.</h2>
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">Have an idea? Foundry can build it.</h2>
           <p className="text-muted-foreground">Start typing or upload your idea — no signup needed.</p>
         </div>
         
@@ -98,10 +131,14 @@ const TryFoundrySection = () => {
                     type="text"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="I want to build an app that helps creators..."
+                    placeholder={currentPlaceholder}
                     className="pr-24 py-6 text-base bg-gray-800/50 border-gray-700 focus-visible:ring-violet-500 focus-visible:border-violet-500 transition-shadow duration-300"
                     disabled={isThinking}
                   />
+                  
+                  {prompt.length === 0 && (
+                    <span className="absolute right-24 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-violet-500/70 animate-pulse"></span>
+                  )}
                   
                   <div className="absolute right-16 top-1/2 -translate-y-1/2 flex items-center space-x-2">
                     <button

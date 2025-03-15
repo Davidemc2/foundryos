@@ -49,12 +49,12 @@ const HowFoundryWorks = () => {
   }, []);
 
   return (
-    <section className="py-24 relative overflow-hidden bg-white">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(139,92,246,0.05)_0%,transparent_100%)]" />
+    <section className="py-28 relative overflow-hidden bg-[#f9f9f9]">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(139,92,246,0.03)_0%,transparent_100%)]" />
       
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4">
+        <div className="max-w-3xl mx-auto text-center mb-20">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-6">
             How Foundry OS Works
           </h2>
           <p className="text-lg text-gray-600">
@@ -64,7 +64,7 @@ const HowFoundryWorks = () => {
 
         <div 
           ref={sectionRef}
-          className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16"
+          className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto mb-20"
         >
           {steps.map((step, index) => (
             <div
@@ -83,7 +83,7 @@ const HowFoundryWorks = () => {
                   <step.icon size={32} />
                 </div>
                 
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">
                   {step.title}
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed">
