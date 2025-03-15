@@ -1,8 +1,6 @@
 
 import { useRef, useEffect } from "react";
-import { Rocket } from "lucide-react";
 import EmailCapture from "./EmailCapture";
-import { Button } from "@/components/ui/button";
 
 const EarlyAccess = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -28,7 +26,7 @@ const EarlyAccess = () => {
   }, []);
   
   return (
-    <section id="pledge-support" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out" style={{
+    <section id="early-access" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out" style={{
       backgroundColor: "#4314A0"
     }}>
       {/* Background elements and gradients */}
@@ -38,20 +36,20 @@ const EarlyAccess = () => {
       
       <div className="container-custom max-w-4xl">
         <div className="text-center mb-12 mx-auto">
-          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 animate-pulse-slow">
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
             Get Early Access to Foundry OS
           </h2>
           <p className="text-xl text-violet-100 mx-auto mb-6">
             Only 200 early builder spots available — secure yours now.
           </p>
-          <p className="text-sm text-violet-200 italic animate-pulse mb-12">
+          <p className="text-sm text-violet-200 italic mb-12">
             8 builders have joined the waitlist this week
           </p>
           
           <div className="max-w-md mx-auto space-y-8">
             <EmailCapture 
-              placeholder="Enter your email"
-              buttonText="Secure Your Spot" 
+              placeholder="Enter your email to join the waitlist"
+              buttonText="Get Early Access" 
               className="animate-fadeIn animation-delay-200 scale-110"
               variant="hero"
             />

@@ -7,7 +7,6 @@ import Features from "@/components/Features";
 import FAQ from "@/components/FAQ";
 import EarlyAccess from "@/components/EarlyAccess";
 import Footer from "@/components/Footer";
-import HowItWorks from "@/components/HowItWorks";
 import FounderStory from "@/components/FounderStory";
 
 const Index = () => {
@@ -22,9 +21,8 @@ const Index = () => {
       <main>
         <Hero />
         <FounderStory />
-        <TryFoundrySection />
-        <HowItWorks />
         <Features />
+        <TryFoundrySection />
         <FAQ />
         <EarlyAccess />
       </main>

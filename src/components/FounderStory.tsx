@@ -4,16 +4,11 @@ import { User } from "lucide-react";
 
 const FounderStory = () => {
   const [displayText, setDisplayText] = useState("");
-  const [currentSentence, setCurrentSentence] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
   const [showSignature, setShowSignature] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   
-  const sentences = [
-    "I built Foundry OS because I was tired of prompting, coding, and still never launching.",
-    "This tool helps you go from an idea in your head to a scoped plan, clear tasks, and a real build — without the mess.",
-    "Foundry OS is the product I needed. So I built it for you too."
-  ];
+  const fullText = "I built Foundry OS because I was tired of endless prompting, coding, and still never launching. This tool helps you go from idea to build — fast, focused, and without the mess. Foundry OS is the product I needed. So I built it for you too.";
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,35 +34,22 @@ const FounderStory = () => {
 
   useEffect(() => {
     if (!isTyping) return;
-
-    const currentQuote = sentences[currentSentence];
     
-    if (displayText.length < currentQuote.length) {
+    if (displayText.length < fullText.length) {
       const typingTimer = setTimeout(() => {
-        setDisplayText(currentQuote.substring(0, displayText.length + 1));
-      }, 40); // Slightly faster typing speed
+        setDisplayText(fullText.substring(0, displayText.length + 1));
+      }, 40); 
       
       return () => clearTimeout(typingTimer);
     } else {
-      // Finished typing current sentence
-      if (currentSentence < sentences.length - 1) {
-        // Move to next sentence after a pause
-        const pauseTimer = setTimeout(() => {
-          setDisplayText("");
-          setCurrentSentence(currentSentence + 1);
-        }, 1000); // Shorter pause between sentences for more natural flow
-        
-        return () => clearTimeout(pauseTimer);
-      } else {
-        // Finished all sentences, show signature
-        const signatureTimer = setTimeout(() => {
-          setShowSignature(true);
-        }, 800);
-        
-        return () => clearTimeout(signatureTimer);
-      }
+      // Finished typing, show signature
+      const signatureTimer = setTimeout(() => {
+        setShowSignature(true);
+      }, 800);
+      
+      return () => clearTimeout(signatureTimer);
     }
-  }, [displayText, currentSentence, sentences, isTyping]);
+  }, [displayText, fullText, isTyping]);
 
   return (
     <section 
@@ -79,18 +61,8 @@ const FounderStory = () => {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-8 shadow-sm border border-purple-100">
             <div className="min-h-28 flex items-center justify-center">
               <div className="font-sans text-xl md:text-2xl text-[#333333]">
-                {currentSentence < sentences.length && (
-                  <>
-                    <span>{displayText}</span>
-                    <span className="inline-block w-2 h-5 bg-violet-600 ml-1 animate-pulse"></span>
-                  </>
-                )}
-                {currentSentence >= sentences.length && !showSignature && (
-                  <>
-                    <span>{sentences[sentences.length - 1]}</span>
-                    <span className="inline-block w-2 h-5 bg-violet-600 ml-1 animate-pulse"></span>
-                  </>
-                )}
+                <span>{displayText}</span>
+                <span className="inline-block w-2 h-5 bg-violet-600 ml-1 animate-pulse"></span>
               </div>
             </div>
             

@@ -104,7 +104,7 @@ const EmailCapture = ({
         </Button>
       </div>
       <p className="text-xs text-center sm:text-left mt-2 text-muted-foreground">
-        No credit card required to join the waitlist
+        We'll only contact you when your build is ready — no spam.
       </p>
     </form>
   );
