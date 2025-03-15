@@ -23,12 +23,18 @@ export const MessageResponseContent: React.FC<MessageResponseContentProps> = ({ 
           h2: ({ node, ...props }) => <h2 className="text-lg font-bold my-2" {...props} />,
           h3: ({ node, ...props }) => <h3 className="text-md font-bold my-2" {...props} />,
           p: ({ node, ...props }) => <p className="my-2" {...props} />,
-          code: ({ node, inline, ...props }) => 
-            inline ? (
-              <code className="bg-gray-700 px-1 py-0.5 rounded text-xs" {...props} />
+          code: ({ node, className, children, ...props }) => {
+            const match = /language-(\w+)/.exec(className || "");
+            return !props.className ? (
+              <code className="bg-gray-700 px-1 py-0.5 rounded text-xs" {...props}>
+                {children}
+              </code>
             ) : (
-              <code className="block bg-gray-700 p-2 rounded-md text-xs my-2 overflow-x-auto" {...props} />
-            ),
+              <code className="block bg-gray-700 p-2 rounded-md text-xs my-2 overflow-x-auto" {...props}>
+                {children}
+              </code>
+            );
+          },
           pre: ({ node, ...props }) => <pre className="bg-gray-700 p-2 rounded-md my-2 overflow-x-auto" {...props} />,
           blockquote: ({ node, ...props }) => <blockquote className="border-l-2 border-violet-400 pl-2 italic my-2" {...props} />,
         }}
