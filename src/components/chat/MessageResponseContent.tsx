@@ -2,7 +2,7 @@
 import React from "react";
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
-import { Components } from "react-markdown/lib/ast-to-react";
+import type { Components } from "react-markdown";
 
 interface MessageResponseContentProps {
   content: string;
