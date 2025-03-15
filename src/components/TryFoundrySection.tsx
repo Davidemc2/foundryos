@@ -12,7 +12,6 @@ const TryFoundrySection = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -65,18 +64,23 @@ const TryFoundrySection = () => {
     <section className="py-16 relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 to-gray-950" />
       
-      {/* Subtle background effects */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,rgba(155,135,245,0.08)_0%,transparent_100%)]" />
+      {/* Animated background effects */}
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,rgba(155,135,245,0.12)_0%,transparent_100%)]" />
+      <div className="absolute top-20 left-1/4 w-72 h-72 bg-violet-500/5 rounded-full blur-3xl animate-pulse-slow"></div>
+      <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-violet-500/5 rounded-full blur-3xl animate-pulse-slow animation-delay-1000"></div>
       
       <div className="container-custom">
         <div className="text-center max-w-3xl mx-auto mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-2">Got an idea? Foundry will build it.</h2>
-          <p className="text-muted-foreground text-sm md:text-base">Start typing — no signup needed.</p>
+          <h2 className="text-2xl md:text-4xl font-bold mb-3">Have an idea? Foundry can build it.</h2>
+          <p className="text-muted-foreground">Start typing or upload your idea — no signup needed.</p>
         </div>
         
-        <div className="max-w-2xl mx-auto">
-          <div className="relative">
-            <div className={`relative bg-gray-900 rounded-xl shadow-lg p-5 border border-gray-800 transition-all duration-300 ${isFocused ? 'shadow-[0_0_15px_rgba(168,85,247,0.3)]' : ''}`}>
+        <div className="max-w-2xl mx-auto transform hover:scale-[1.01] transition-all duration-300">
+          <div className="relative group">
+            {/* Glow Effect Border */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse-slow"></div>
+            
+            <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-xl shadow-xl p-5 border border-gray-800">
               <form 
                 onSubmit={handleSubmit} 
                 className="relative"
@@ -94,10 +98,8 @@ const TryFoundrySection = () => {
                     type="text"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    placeholder="I want to build an app that helps creators..."
-                    className="pr-12 py-6 text-base bg-gray-800/50 border-gray-700 focus-visible:ring-violet-500 focus-visible:border-violet-500 transition-all duration-300"
+                    placeholder="I want to build an AI tool that helps creators..."
+                    className="pr-12 py-6 text-base bg-gray-800/50 border-gray-700 focus-visible:ring-violet-500 focus-visible:border-violet-500"
                     disabled={isThinking}
                   />
                   
@@ -121,7 +123,7 @@ const TryFoundrySection = () => {
                   
                   <Button 
                     type="submit"
-                    className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-violet-600 to-violet-700 hover:bg-violet-700 transition-all ${isThinking ? 'opacity-70' : ''}`}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-violet-600 hover:bg-violet-700 transition-all btn-glow ${isThinking ? 'opacity-70' : ''}`}
                     disabled={isThinking}
                   >
                     {isThinking ? (
@@ -134,7 +136,7 @@ const TryFoundrySection = () => {
                       </span>
                     ) : (
                       <>
-                        Let's Build It <ArrowRight size={16} />
+                        Start Building <ArrowRight size={16} />
                       </>
                     )}
                   </Button>
