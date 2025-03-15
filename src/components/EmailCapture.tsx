@@ -3,7 +3,9 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Rocket } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 type EmailCaptureProps = {
   buttonText?: string;
@@ -19,29 +21,57 @@ const EmailCapture = ({
   variant = "default"
 }: EmailCaptureProps) => {
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes('@')) return;
     
-    // In a real app, we'd send this to a server
-    console.log("Email submitted:", email);
-    setSubmitted(true);
-    setEmail("");
+    setIsSubmitting(true);
     
-    // Navigate to thank you page
-    window.location.href = "/early-access-confirmation";
-  };
+    try {
+      // Store email in Supabase
+      const { error } = await supabase
+        .from('waitlist')
+        .insert([{ email }]);
+      
+      if (error) {
+        if (error.code === '23505') { // Unique violation error code
+          toast({
+            title: "Already on the waitlist",
+            description: "This email is already on our waitlist. Thank you for your interest!",
+            variant: "default",
+          });
+        } else {
+          console.error("Error submitting email:", error);
+          toast({
+            title: "Something went wrong",
+            description: "Please try again later.",
+            variant: "destructive",
+          });
+        }
+        setIsSubmitting(false);
+        return;
+      }
 
-  if (submitted) {
-    return (
-      <div className={`text-center p-4 ${className}`}>
-        <p className="text-green-500 font-medium mb-2">Thanks for joining our waitlist!</p>
-        <p className="text-sm text-muted-foreground">We'll notify you when early access is available.</p>
-      </div>
-    );
-  }
+      console.log("Email submitted to waitlist:", email);
+      setEmail("");
+      
+      // Navigate to thank you page
+      navigate("/early-access");
+    } catch (error) {
+      console.error("Error in submission:", error);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className={`${className} ${variant === "hero" ? "max-w-md mx-auto" : ""}`}>
@@ -53,15 +83,17 @@ const EmailCapture = ({
           placeholder={placeholder}
           className={`${variant === "hero" ? "h-12" : ""}`}
           required
+          disabled={isSubmitting}
         />
         <Button 
           type="submit" 
           className={`btn-glow flex gap-2 ${variant === "hero" ? 
             "bg-violet-700 hover:bg-violet-600 h-12 px-6" : 
             "bg-violet-700 hover:bg-violet-600"}`}
+          disabled={isSubmitting}
         >
-          {buttonText}
-          <Rocket size={16} className="animate-bounce-subtle" />
+          {isSubmitting ? "Submitting..." : buttonText}
+          <Rocket size={16} className={isSubmitting ? "" : "animate-bounce-subtle"} />
         </Button>
       </div>
       <p className="text-xs text-center sm:text-left mt-2 text-muted-foreground">
