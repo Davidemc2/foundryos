@@ -4,15 +4,16 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import TryFoundrySection from "@/components/TryFoundrySection";
 import Features from "@/components/Features";
+import HowItWorks from "@/components/HowItWorks";
 import FAQ from "@/components/FAQ";
 import EarlyAccess from "@/components/EarlyAccess";
 import Footer from "@/components/Footer";
-import HowItWorks from "@/components/HowItWorks";
+import WhyIBuiltSection from "@/components/features/WhyIBuiltSection";
 
 const Index = () => {
   useEffect(() => {
     // Update document title
-    document.title = "Foundry OS - Turn your idea into a product with AI";
+    document.title = "AIBuilder - Turn your idea into a product with AI";
   }, []);
 
   return (
@@ -21,6 +22,7 @@ const Index = () => {
       <main>
         <Hero />
         <TryFoundrySection />
+        <WhyIBuiltSection />
         <Features />
         <HowItWorks />
         <FAQ />

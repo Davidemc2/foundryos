@@ -49,22 +49,22 @@ const HowFoundryWorks = () => {
   }, []);
 
   return (
-    <section className="py-28 relative overflow-hidden bg-[#f9f9f9]">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(139,92,246,0.03)_0%,transparent_100%)]" />
+    <section className="py-24 relative overflow-hidden bg-gradient-to-b from-gray-900 to-gray-950">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(139,92,246,0.1)_0%,transparent_100%)]" />
       
       <div className="container-custom">
-        <div className="max-w-3xl mx-auto text-center mb-20">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-6">
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
             How Foundry OS Works
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-400">
             Transform your idea into a fully-scoped product in minutes
           </p>
         </div>
 
         <div 
           ref={sectionRef}
-          className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto mb-20"
+          className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16"
         >
           {steps.map((step, index) => (
             <div
@@ -76,17 +76,17 @@ const HowFoundryWorks = () => {
               }`}
               style={{ transitionDelay: `${index * 200}ms` }}
             >
-              <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-violet-500/50 transition-colors shadow-xl relative group">
-                <div className="absolute inset-0 bg-gradient-to-b from-violet-100/30 to-transparent rounded-2xl" />
+              <div className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700/50 hover:border-violet-500/50 transition-colors shadow-xl relative group">
+                <div className="absolute inset-0 bg-gradient-to-b from-violet-600/5 to-transparent rounded-2xl" />
                 
-                <div className={`w-16 h-16 rounded-xl mb-6 flex items-center justify-center bg-${step.color}-100 text-${step.color}-500`}>
+                <div className={`w-16 h-16 rounded-xl mb-6 flex items-center justify-center bg-${step.color}-500/10 text-${step.color}-500`}>
                   <step.icon size={32} />
                 </div>
                 
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                <h3 className="text-xl font-semibold text-white mb-2">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-400 text-sm leading-relaxed">
                   {step.description}
                 </p>
               </div>
