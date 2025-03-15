@@ -100,98 +100,103 @@ serve(async (req) => {
     const modelName = "gpt-3.5-turbo";
     console.log(`Calling OpenAI API with model: ${modelName}`);
     
-    try {
-      console.log("About to make OpenAI API request");
-      
-      const openAIRequestBody = JSON.stringify({
-        model: modelName,
-        messages: allMessages,
-        temperature: 0.7,
-        max_tokens: 1000,   // Adding token limit to prevent very long responses
-      });
-      
-      console.log(`OpenAI request body (abbreviated): ${openAIRequestBody.substring(0, 200)}...`);
-      
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${openAIApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: openAIRequestBody,
-      });
-
-      // Log response status for debugging
-      console.log(`OpenAI API response status: ${response.status}`);
-      
-      // Get response text for logging before parsing JSON
-      const responseText = await response.text();
-      console.log(`OpenAI API raw response (abbreviated): ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`);
-      
-      // Handle non-successful responses
-      if (!response.ok) {
-        let errorData;
-        try {
-          errorData = JSON.parse(responseText);
-        } catch (jsonError) {
-          console.error("Failed to parse error response as JSON:", jsonError);
-          errorData = { error: { message: "Unknown error: " + responseText.substring(0, 200) } };
-        }
-        
-        console.error(`OpenAI API error (${response.status}):`, errorData);
-        
-        // Check specifically for quota errors
-        if (errorData.error?.type === "insufficient_quota") {
-          return new Response(JSON.stringify({
-            error: "OpenAI API quota exceeded. Please update your billing details or use a different API key.",
-            details: "The current API key has reached its usage limit. Please check your OpenAI account billing settings."
-          }), {
-            status: 429, // Using 429 for rate limit/quota issues
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        
-        // Check for invalid API key
-        if (response.status === 401) {
-          return new Response(JSON.stringify({
-            error: "Invalid OpenAI API key. Please check your API key and try again.",
-            details: errorData
-          }), {
-            status: 401,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        
-        // Provide more detailed error message for other errors
-        const errorMessage = errorData.error?.message || "Unknown error";
-        const errorType = errorData.error?.type || "Unknown error type";
-        const statusCode = response.status;
-        
-        return new Response(JSON.stringify({
-          error: `OpenAI API error (${statusCode}): ${errorType} - ${errorMessage}`,
-          details: errorData
-        }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      // Parse the JSON response
-      let data;
+    const retryOpenAI = async (attempt = 1, maxAttempts = 3) => {
       try {
-        data = JSON.parse(responseText);
-      } catch (jsonError) {
-        console.error("Failed to parse successful response as JSON:", jsonError);
-        return new Response(JSON.stringify({
-          error: "Failed to parse OpenAI API response as JSON",
-          rawResponse: responseText.substring(0, 500)
-        }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        console.log(`OpenAI API request attempt ${attempt} of ${maxAttempts}`);
+        
+        const openAIRequestBody = JSON.stringify({
+          model: modelName,
+          messages: allMessages,
+          temperature: 0.7,
+          max_tokens: 1000,
         });
+        
+        console.log(`OpenAI request body (abbreviated): ${openAIRequestBody.substring(0, 200)}...`);
+        
+        const controller = new AbortController();
+        // Set timeout to 25 seconds
+        const timeoutId = setTimeout(() => controller.abort(), 25000);
+        
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${openAIApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: openAIRequestBody,
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+
+        // Log response status for debugging
+        console.log(`OpenAI API response status: ${response.status}`);
+        
+        // Get response text for logging before parsing JSON
+        const responseText = await response.text();
+        
+        if (!response.ok) {
+          // Handle non-200 responses with better error information
+          let errorMessage = `OpenAI API error (${response.status})`;
+          let errorData = {};
+          
+          try {
+            errorData = JSON.parse(responseText);
+            errorMessage += `: ${errorData.error?.message || "Unknown error"}`;
+          } catch (e) {
+            errorMessage += `: ${responseText.substring(0, 100)}`;
+          }
+          
+          console.error(errorMessage);
+          
+          // Check if we should retry based on the error type
+          if (attempt < maxAttempts) {
+            const delay = attempt * 1000; // Exponential backoff
+            console.log(`Retrying in ${delay}ms...`);
+            await new Promise(r => setTimeout(r, delay));
+            return retryOpenAI(attempt + 1, maxAttempts);
+          }
+          
+          throw new Error(errorMessage);
+        }
+        
+        // Parse the successful response
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (jsonError) {
+          console.error("Failed to parse OpenAI response:", jsonError);
+          throw new Error("Invalid JSON in OpenAI response");
+        }
+        
+        console.log("OpenAI API response received successfully");
+        
+        return data;
+      } catch (error) {
+        if (error.name === "AbortError") {
+          console.error("Request timed out");
+          if (attempt < maxAttempts) {
+            const delay = attempt * 1000;
+            console.log(`Request timed out. Retrying in ${delay}ms...`);
+            await new Promise(r => setTimeout(r, delay));
+            return retryOpenAI(attempt + 1, maxAttempts);
+          }
+          throw new Error("OpenAI API request timed out after multiple attempts");
+        }
+        
+        if (attempt < maxAttempts) {
+          const delay = attempt * 1000;
+          console.log(`Error: ${error.message}. Retrying in ${delay}ms...`);
+          await new Promise(r => setTimeout(r, delay));
+          return retryOpenAI(attempt + 1, maxAttempts);
+        }
+        
+        throw error;
       }
-      
-      console.log("OpenAI API response received successfully");
+    };
+    
+    try {
+      const data = await retryOpenAI();
       
       // Validate response structure
       if (!data.choices || !data.choices[0] || !data.choices[0].message) {
@@ -213,6 +218,17 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } catch (apiError) {
+      // Determine if this is a rate limit or quota issue
+      if (apiError.message.includes("rate limit") || apiError.message.includes("quota")) {
+        return new Response(JSON.stringify({
+          error: "OpenAI API quota exceeded. Please update your billing details or use a different API key.",
+          details: "The current API key has reached its usage limit. Please check your OpenAI account billing settings."
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      
       console.error("Error calling OpenAI API:", apiError);
       return new Response(JSON.stringify({
         error: "Failed to communicate with OpenAI API",

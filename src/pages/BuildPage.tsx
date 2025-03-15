@@ -13,6 +13,7 @@ import { TypingIndicator } from "@/components/chat/TypingIndicator";
 import { BuildEmailForm } from "@/components/chat/BuildEmailForm";
 import { ThankYouCard } from "@/components/chat/ThankYouCard";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type MessageType = "user" | "assistant";
 
@@ -60,6 +61,8 @@ const BuildPage = () => {
   const [currentStage, setCurrentStage] = useState<ChatStage>('initial');
   const [showThankYou, setShowThankYou] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [result, setResult] = useState<{
     scope: string;
     tasks: TaskItem[];
@@ -134,10 +137,11 @@ const BuildPage = () => {
   const callAIFunction = async (formattedMessages: any[], retryCount = 0) => {
     try {
       console.log("Calling AI function, attempt:", retryCount + 1);
+      setConnectionError(null);
       
       // Add a slight delay on retries to prevent overwhelming the API
       if (retryCount > 0) {
-        await new Promise(resolve => setTimeout(resolve, retryCount * 1000));
+        await new Promise(resolve => setTimeout(resolve, retryCount * 1500));
       }
       
       const response = await supabase.functions.invoke('ai-chat', {
@@ -164,13 +168,21 @@ const BuildPage = () => {
       console.error("Error in callAIFunction:", error);
       
       // Retry logic - only retry for specific errors and up to max retries
-      if (retryCount < 2 && 
+      const maxRetries = 3;
+      if (retryCount < maxRetries && 
           (error.message?.includes("rate limit") || 
            error.message?.includes("timeout") || 
            error.message?.includes("network") ||
-           error.message?.includes("500"))) {
+           error.message?.includes("500") ||
+           error.message?.includes("503") ||
+           error.message?.includes("429"))) {
         console.log(`Retrying AI function call, attempt ${retryCount + 2}`);
+        setRetryCount(prev => prev + 1);
         return callAIFunction(formattedMessages, retryCount + 1);
+      }
+      
+      if (retryCount >= maxRetries) {
+        setConnectionError("Failed to connect after multiple attempts. The service might be temporarily unavailable.");
       }
       
       throw error;
@@ -199,6 +211,7 @@ const BuildPage = () => {
     setIsTyping(true);
     setHasInteracted(true);
     setIsProcessing(true);
+    setConnectionError(null);
     
     try {
       const formattedMessages = [
@@ -214,6 +227,9 @@ const BuildPage = () => {
 
       // Decide if we should move to the next stage based on the message content and current stage
       handleStageProgression(aiContent);
+      
+      // Reset retry count on success
+      setRetryCount(0);
 
     } catch (error) {
       console.error("Error processing message:", error);
@@ -227,6 +243,7 @@ const BuildPage = () => {
         });
         
         addAssistantMessage("I'm sorry, but it looks like the AI service has reached its usage limit. The administrator will need to update the OpenAI API key or billing details.");
+        setConnectionError("OpenAI API quota exceeded. Please contact the administrator.");
       } else if (error.message?.includes("Invalid OpenAI API key")) {
         toast({
           title: "Invalid API Key",
@@ -235,6 +252,7 @@ const BuildPage = () => {
         });
         
         addAssistantMessage("I'm sorry, but the AI service is experiencing authentication issues. The OpenAI API key may need to be updated.");
+        setConnectionError("Invalid OpenAI API key. Please contact the administrator.");
       } else {
         toast({
           title: "Connection Error",
@@ -247,6 +265,26 @@ const BuildPage = () => {
     } finally {
       setIsProcessing(false);
       setIsTyping(false);
+    }
+  };
+
+  const handleRetry = () => {
+    const lastUserMessage = messages.filter(msg => msg.type === "user").pop();
+    if (lastUserMessage) {
+      setInputValue(lastUserMessage.content.replace(/\[Uploaded: .*?\]/g, "").trim());
+      // Remove the last user message and AI response
+      const filteredMessages = messages.filter(msg => 
+        msg.id !== lastUserMessage.id && 
+        (messages.indexOf(msg) < messages.findIndex(m => m.id === lastUserMessage.id) - 1)
+      );
+      setMessages(filteredMessages);
+      setConnectionError(null);
+      // Trigger the send message after a short delay
+      setTimeout(() => {
+        handleSendMessage(new Event('submit') as any);
+      }, 500);
+    } else {
+      setConnectionError(null);
     }
   };
 
@@ -449,6 +487,20 @@ const BuildPage = () => {
                   <div ref={messageEndRef} />
                 </div>
               </ScrollArea>
+              
+              {connectionError && (
+                <Alert className="mb-4 border-red-600 bg-red-900/20 text-red-50">
+                  <AlertDescription className="flex items-center justify-between">
+                    <div>
+                      <strong>Connection Error</strong>
+                      <p>{connectionError}</p>
+                    </div>
+                    <Button variant="destructive" onClick={handleRetry} className="ml-2 bg-red-700 hover:bg-red-800">
+                      Try Again
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
               
               {uploadedFiles.length > 0 && (
                 <div className="mb-2 flex flex-wrap gap-2">
