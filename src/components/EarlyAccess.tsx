@@ -1,8 +1,6 @@
-
 import { useRef, useEffect } from "react";
 import { CheckCircle } from "lucide-react";
 import EmailCapture from "./EmailCapture";
-
 const EarlyAccess = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -25,11 +23,9 @@ const EarlyAccess = () => {
       }
     };
   }, []);
-  
-  return (
-    <section id="pledge-support" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out" style={{
-      backgroundColor: "#4314A0"
-    }}>
+  return <section id="pledge-support" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out" style={{
+    backgroundColor: "#4314A0"
+  }}>
       {/* Background elements and gradients */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_50%_at_50%_50%,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
       <div className="floating-element top-20 left-20 w-[200px] h-[200px] animate-float"></div>
@@ -50,39 +46,7 @@ const EarlyAccess = () => {
         
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
           {/* Left side: Value points */}
-          <div className="bg-violet-800/30 backdrop-blur-sm rounded-xl p-8 border border-white/10">
-            <h3 className="text-2xl font-bold text-white mb-6">Build Your Product Fast</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
-                <div>
-                  <p className="text-white font-semibold">Free 7-day build</p>
-                  <p className="text-violet-200 text-sm">Standard build timeline, perfect for most ideas</p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
-                <div>
-                  <p className="text-white font-semibold">$250 2-day fast build</p>
-                  <p className="text-violet-200 text-sm">Priority processing for urgent projects</p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
-                <div>
-                  <p className="text-white font-semibold">Unlimited iterations</p>
-                  <p className="text-violet-200 text-sm">Refine your product until it's perfect</p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
-                <div>
-                  <p className="text-white font-semibold">Full source code ownership</p>
-                  <p className="text-violet-200 text-sm">You own everything Foundry builds for you</p>
-                </div>
-              </li>
-            </ul>
-          </div>
+          
           
           {/* Right side: Email capture */}
           <div className="bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300">
@@ -95,19 +59,13 @@ const EarlyAccess = () => {
                 </div>
               </div>
               
-              <EmailCapture 
-                className="mb-6"
-                placeholder="youremail@example.com"
-                buttonText="Join Now" 
-              />
+              <EmailCapture className="mb-6" placeholder="youremail@example.com" buttonText="Join Now" />
               
               <p className="text-sm text-gray-500">No credit card required to join the waitlist</p>
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default EarlyAccess;
