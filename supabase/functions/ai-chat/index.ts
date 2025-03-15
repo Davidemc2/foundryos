@@ -96,8 +96,8 @@ serve(async (req) => {
       console.log("Files included in the request:", uploadedFiles);
     }
 
-    // Use gpt-4o-mini for better performance and compatibility with the OPENAI_API_KEY
-    const modelName = "gpt-4o-mini";
+    // Use gpt-3.5-turbo which is a stable model with good compatibility
+    const modelName = "gpt-3.5-turbo";
     console.log(`Calling OpenAI API with model: ${modelName}`);
     
     try {
@@ -107,6 +107,7 @@ serve(async (req) => {
         model: modelName,
         messages: allMessages,
         temperature: 0.7,
+        max_tokens: 1000,   // Adding token limit to prevent very long responses
       });
       
       console.log(`OpenAI request body (abbreviated): ${openAIRequestBody.substring(0, 200)}...`);

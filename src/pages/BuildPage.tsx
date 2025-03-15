@@ -131,6 +131,52 @@ const BuildPage = () => {
     return newMessage.id;
   };
 
+  const callAIFunction = async (formattedMessages: any[], retryCount = 0) => {
+    try {
+      console.log("Calling AI function, attempt:", retryCount + 1);
+      
+      // Add a slight delay on retries to prevent overwhelming the API
+      if (retryCount > 0) {
+        await new Promise(resolve => setTimeout(resolve, retryCount * 1000));
+      }
+      
+      const response = await supabase.functions.invoke('ai-chat', {
+        body: {
+          messages: formattedMessages,
+          stage: currentStage,
+          uploadedFiles: uploadedFiles.map(file => file.name)
+        }
+      });
+
+      if (response.error) {
+        console.error("AI response error:", response.error);
+        throw new Error(`Failed to get AI response: ${response.error}`);
+      }
+
+      // Check if the response data contains an error field
+      if (response.data && response.data.error) {
+        console.error("AI function error:", response.data.error);
+        throw new Error(response.data.error);
+      }
+
+      return response.data.response;
+    } catch (error) {
+      console.error("Error in callAIFunction:", error);
+      
+      // Retry logic - only retry for specific errors and up to max retries
+      if (retryCount < 2 && 
+          (error.message?.includes("rate limit") || 
+           error.message?.includes("timeout") || 
+           error.message?.includes("network") ||
+           error.message?.includes("500"))) {
+        console.log(`Retrying AI function call, attempt ${retryCount + 2}`);
+        return callAIFunction(formattedMessages, retryCount + 1);
+      }
+      
+      throw error;
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -160,74 +206,44 @@ const BuildPage = () => {
         { role: 'user', content: userMessage.content }
       ];
 
-      // Get response from AI
-      const response = await supabase.functions.invoke('ai-chat', {
-        body: {
-          messages: formattedMessages,
-          stage: currentStage,
-          uploadedFiles: uploadedFiles.map(file => file.name) // We'd handle file content in a real implementation
-        }
-      });
-
-      setIsTyping(false);
-
-      if (response.error) {
-        console.error("AI response error:", response.error);
-        toast({
-          title: "Error",
-          description: `Failed to get AI response: ${response.error}`,
-          variant: "destructive"
-        });
-        
-        // Add a fallback message for the user when the API fails
-        addAssistantMessage("I'm sorry, I'm having trouble connecting to my AI services right now. This could be due to high traffic or a temporary outage. Please try again in a moment.");
-        return;
-      }
-
-      // Check if the response data contains an error field
-      if (response.data && response.data.error) {
-        console.error("AI function error:", response.data.error);
-        
-        // Special handling for quota exceeded errors
-        if (response.data.error.includes("quota exceeded") || response.data.error.includes("insufficient_quota")) {
-          toast({
-            title: "API Limit Reached",
-            description: "The OpenAI API usage limit has been reached. Please update the API key or billing details.",
-            variant: "destructive"
-          });
-          
-          // Add a friendly message about the quota issue
-          addAssistantMessage("I'm sorry, but it looks like the AI service has reached its usage limit. The administrator will need to update the OpenAI API key or billing details. In a production environment, this would be handled more gracefully.");
-        } else {
-          toast({
-            title: "AI Service Error",
-            description: `${response.data.error}`,
-            variant: "destructive"
-          });
-          
-          // Add a generic error message
-          addAssistantMessage("I'm sorry, but there was an error processing your request. Please try again later.");
-        }
-        return;
-      }
-
+      // Get response from AI using our new function with retry logic
+      const aiContent = await callAIFunction(formattedMessages);
+      
       // Add the AI response
-      const aiContent = response.data.response;
       addAssistantMessage(aiContent);
 
       // Decide if we should move to the next stage based on the message content and current stage
       handleStageProgression(aiContent);
 
     } catch (error) {
-      console.error("Error calling AI function:", error);
-      toast({
-        title: "Connection Error",
-        description: "Failed to connect to AI service. Please try again.",
-        variant: "destructive"
-      });
+      console.error("Error processing message:", error);
       
-      // Add a network error message
-      addAssistantMessage("I'm having trouble connecting to my services. This might be due to network issues or the server being temporarily unavailable. Please try again in a moment.");
+      // Show a user-friendly error message based on the error type
+      if (error.message?.includes("quota exceeded") || error.message?.includes("insufficient_quota")) {
+        toast({
+          title: "API Limit Reached",
+          description: "The OpenAI API usage limit has been reached. Please update the API key or billing details.",
+          variant: "destructive"
+        });
+        
+        addAssistantMessage("I'm sorry, but it looks like the AI service has reached its usage limit. The administrator will need to update the OpenAI API key or billing details.");
+      } else if (error.message?.includes("Invalid OpenAI API key")) {
+        toast({
+          title: "Invalid API Key",
+          description: "The OpenAI API key appears to be invalid. Please check and update the key.",
+          variant: "destructive"
+        });
+        
+        addAssistantMessage("I'm sorry, but the AI service is experiencing authentication issues. The OpenAI API key may need to be updated.");
+      } else {
+        toast({
+          title: "Connection Error",
+          description: "Failed to connect to AI service. Please try again.",
+          variant: "destructive"
+        });
+        
+        addAssistantMessage("I'm having trouble connecting to my services. This might be due to network issues or high traffic. Please try again in a moment.");
+      }
     } finally {
       setIsProcessing(false);
       setIsTyping(false);
