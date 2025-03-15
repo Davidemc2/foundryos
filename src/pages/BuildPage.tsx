@@ -152,6 +152,8 @@ const BuildPage = () => {
         }
       });
 
+      console.log("Edge function response:", response);
+
       if (response.error) {
         console.error("AI response error:", response.error);
         throw new Error(`Failed to get AI response: ${response.error}`);
@@ -159,7 +161,7 @@ const BuildPage = () => {
 
       // Check if the response data contains an error field
       if (response.data && response.data.error) {
-        console.error("AI function error:", response.data.error);
+        console.error("AI function error:", response.data.error, response.data.details);
         throw new Error(response.data.error);
       }
 
@@ -169,13 +171,15 @@ const BuildPage = () => {
       
       // Retry logic - only retry for specific errors and up to max retries
       const maxRetries = 3;
-      if (retryCount < maxRetries && 
-          (error.message?.includes("rate limit") || 
-           error.message?.includes("timeout") || 
-           error.message?.includes("network") ||
-           error.message?.includes("500") ||
-           error.message?.includes("503") ||
-           error.message?.includes("429"))) {
+      const shouldRetry = 
+        error.message?.includes("rate limit") || 
+        error.message?.includes("timeout") || 
+        error.message?.includes("network") ||
+        error.message?.includes("500") ||
+        error.message?.includes("503") ||
+        error.message?.includes("429");
+        
+      if (retryCount < maxRetries && shouldRetry) {
         console.log(`Retrying AI function call, attempt ${retryCount + 2}`);
         setRetryCount(prev => prev + 1);
         return callAIFunction(formattedMessages, retryCount + 1);
@@ -183,6 +187,12 @@ const BuildPage = () => {
       
       if (retryCount >= maxRetries) {
         setConnectionError("Failed to connect after multiple attempts. The service might be temporarily unavailable.");
+      } else if (error.message?.includes("API key")) {
+        setConnectionError("Authentication error with AI service. Please contact the administrator.");
+      } else if (error.message?.includes("rate limit") || error.message?.includes("429")) {
+        setConnectionError("The AI service is currently experiencing high traffic. Please try again in a moment.");
+      } else {
+        setConnectionError(`Connection error: ${error.message}`);
       }
       
       throw error;
@@ -235,24 +245,30 @@ const BuildPage = () => {
       console.error("Error processing message:", error);
       
       // Show a user-friendly error message based on the error type
-      if (error.message?.includes("quota exceeded") || error.message?.includes("insufficient_quota")) {
+      if (error.message?.includes("quota exceeded") || error.message?.includes("insufficient_quota") || error.message?.includes("rate limit")) {
         toast({
-          title: "API Limit Reached",
-          description: "The OpenAI API usage limit has been reached. Please update the API key or billing details.",
+          title: "AI Service Limit",
+          description: "The AI service is currently busy. Please try again in a moment.",
           variant: "destructive"
         });
         
-        addAssistantMessage("I'm sorry, but it looks like the AI service has reached its usage limit. The administrator will need to update the OpenAI API key or billing details.");
-        setConnectionError("OpenAI API quota exceeded. Please contact the administrator.");
-      } else if (error.message?.includes("Invalid OpenAI API key")) {
+        addAssistantMessage("I'm sorry, but it looks like the AI service is currently experiencing high demand. Please try again in a moment.");
+      } else if (error.message?.includes("Invalid") && error.message?.includes("API key")) {
         toast({
-          title: "Invalid API Key",
-          description: "The OpenAI API key appears to be invalid. Please check and update the key.",
+          title: "Authentication Error",
+          description: "There was an issue connecting to the AI service.",
           variant: "destructive"
         });
         
-        addAssistantMessage("I'm sorry, but the AI service is experiencing authentication issues. The OpenAI API key may need to be updated.");
-        setConnectionError("Invalid OpenAI API key. Please contact the administrator.");
+        addAssistantMessage("I'm sorry, but the AI service is experiencing authentication issues. Please try again or contact support if the problem persists.");
+      } else if (error.message?.includes("timeout")) {
+        toast({
+          title: "Connection Timeout",
+          description: "The request took too long to complete. Please try again.",
+          variant: "destructive"
+        });
+        
+        addAssistantMessage("I'm sorry, but your request took too long to process. This might be due to high traffic or complex queries. Please try again with a simpler request.");
       } else {
         toast({
           title: "Connection Error",
