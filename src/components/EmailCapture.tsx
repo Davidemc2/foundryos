@@ -87,9 +87,9 @@ const EmailCapture = ({
         />
         <Button 
           type="submit" 
-          className={`btn-glow flex gap-2 ${variant === "hero" ? 
-            "bg-violet-700 hover:bg-violet-600 h-12 px-6" : 
-            "bg-violet-700 hover:bg-violet-600"}`}
+          className={`btn-glow flex gap-2 transition-all duration-300 ${variant === "hero" ? 
+            "bg-violet-700 hover:bg-violet-600 hover:scale-105 hover:shadow-[0_0_20px_rgba(139,92,246,0.7)] h-12 px-6" : 
+            "bg-violet-700 hover:bg-violet-600 hover:shadow-[0_0_15px_rgba(139,92,246,0.5)]"}`}
           disabled={isSubmitting}
         >
           {isSubmitting ? "Submitting..." : buttonText}

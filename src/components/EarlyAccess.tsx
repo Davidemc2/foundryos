@@ -38,21 +38,21 @@ const EarlyAccess = () => {
       
       <div className="container-custom max-w-4xl">
         <div className="text-center mb-12 mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 animate-pulse-slow shadow-[0_0_15px_rgba(139,92,246,0.5)]">
             Get Early Access to Foundry OS
           </h2>
           <p className="text-xl text-violet-100 mx-auto mb-6">
             Only 200 early builder spots available — secure yours now.
           </p>
           <p className="text-sm text-violet-200 italic animate-pulse mb-12">
-            15 builders have submitted ideas this week
+            8 builders have joined the waitlist this week
           </p>
           
           <div className="max-w-md mx-auto space-y-8">
             <EmailCapture 
               placeholder="Enter your email"
               buttonText="Secure Your Spot" 
-              className="animate-fadeIn animation-delay-200"
+              className="animate-fadeIn animation-delay-200 scale-110"
               variant="hero"
             />
             
