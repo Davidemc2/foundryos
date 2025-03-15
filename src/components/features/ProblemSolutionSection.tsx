@@ -82,17 +82,20 @@ const ProblemSolutionSection = () => {
   return (
     <FeatureSection
       id="problem"
-      title="Transform Your Development Process"
-      description="AI tools and no-code builders still require significant manual effort."
       bgClass="section-light"
     >
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center mb-6">
         <div 
           ref={rocketRef}
-          className="w-20 h-20 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center opacity-0 transition-all duration-1000 shadow-lg shadow-violet-200/50 hover:shadow-violet-300/50"
+          className="w-16 h-16 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center opacity-0 transition-all duration-1000 shadow-lg shadow-violet-200/50 hover:shadow-violet-300/50"
         >
-          <Rocket size={32} className="stroke-[1.5] transform -rotate-45 animate-bounce-subtle" />
+          <Rocket size={28} className="stroke-[1.5] transform -rotate-45 animate-bounce-subtle" />
         </div>
+      </div>
+      
+      <div className="max-w-3xl mx-auto text-center mb-16">
+        <h2 className="heading-lg mb-4 text-gray-900">Development Challenges</h2>
+        <p className="text-lg text-muted-foreground text-gray-600">AI tools and no-code builders still require significant manual effort.</p>
       </div>
       
       <div className="grid md:grid-cols-2 gap-12 items-stretch">
