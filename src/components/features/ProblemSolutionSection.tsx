@@ -82,6 +82,7 @@ const ProblemSolutionSection = () => {
   return (
     <FeatureSection
       id="problem"
+      title="Development Challenges"  // Added the required title prop
       bgClass="section-light"
     >
       <div className="flex justify-center mb-6">
