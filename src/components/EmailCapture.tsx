@@ -22,6 +22,7 @@ const EmailCapture = ({
 }: EmailCaptureProps) => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -76,15 +77,21 @@ const EmailCapture = ({
   return (
     <form onSubmit={handleSubmit} className={`${className} ${variant === "hero" ? "max-w-md mx-auto" : ""}`}>
       <div className={`flex flex-col sm:flex-row gap-3 ${variant === "hero" ? "justify-center" : ""}`}>
-        <Input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder={placeholder}
-          className={`${variant === "hero" ? "h-12" : ""}`}
-          required
-          disabled={isSubmitting}
-        />
+        <div className={`relative ${variant === "hero" ? "w-full" : ""}`}>
+          {/* Animated glow border */}
+          <div className={`absolute -inset-0.5 bg-gradient-to-r from-violet-600 via-purple-500 to-violet-400 rounded-md opacity-70 blur-sm animate-glow-pulse transition-opacity duration-300 ${isFocused ? 'opacity-90' : 'opacity-50'}`}></div>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={placeholder}
+            className={`relative bg-background border-violet-400/20 focus:border-violet-400 focus:ring-1 focus:ring-violet-400/50 transition-all duration-300 ${variant === "hero" ? "h-12" : ""}`}
+            required
+            disabled={isSubmitting}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
+        </div>
         <Button 
           type="submit" 
           className={`btn-glow flex gap-2 transition-all duration-300 ${variant === "hero" ? 

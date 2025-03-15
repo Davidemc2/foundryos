@@ -38,7 +38,7 @@ const EarlyAccess = () => {
       
       <div className="container-custom max-w-4xl">
         <div className="text-center mb-12 mx-auto">
-          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 animate-pulse-slow shadow-[0_0_15px_rgba(139,92,246,0.5)]">
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 animate-pulse-slow">
             Get Early Access to Foundry OS
           </h2>
           <p className="text-xl text-violet-100 mx-auto mb-6">
