@@ -1,6 +1,8 @@
+
 import { useRef, useEffect } from "react";
 import { CheckCircle } from "lucide-react";
 import EmailCapture from "./EmailCapture";
+
 const EarlyAccess = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -23,9 +25,11 @@ const EarlyAccess = () => {
       }
     };
   }, []);
-  return <section id="pledge-support" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out" style={{
-    backgroundColor: "#4314A0"
-  }}>
+  
+  return (
+    <section id="pledge-support" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out" style={{
+      backgroundColor: "#4314A0"
+    }}>
       {/* Background elements and gradients */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_50%_at_50%_50%,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
       <div className="floating-element top-20 left-20 w-[200px] h-[200px] animate-float"></div>
@@ -37,19 +41,15 @@ const EarlyAccess = () => {
             Get Early Access to Foundry OS
           </h2>
           <p className="text-xl text-violet-100 max-w-3xl mx-auto mb-6">
-            Only 1000 early builder spots available — secure yours now.
+            Only 200 early builder spots available — secure yours now.
           </p>
           <p className="text-sm text-violet-200 italic animate-pulse">
             15 builders have submitted ideas this week
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          {/* Left side: Value points */}
-          
-          
-          {/* Right side: Email capture */}
-          <div className="bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300">
+        <div className="flex justify-center">
+          <div className="max-w-lg bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Secure Your Spot</h3>
               <div className="mb-6">
@@ -59,13 +59,19 @@ const EarlyAccess = () => {
                 </div>
               </div>
               
-              <EmailCapture className="mb-6" placeholder="youremail@example.com" buttonText="Join Now" />
+              <EmailCapture 
+                className="mb-6"
+                placeholder="Enter your email"
+                buttonText="Join Now" 
+              />
               
               <p className="text-sm text-gray-500">No credit card required to join the waitlist</p>
             </div>
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default EarlyAccess;

@@ -1,5 +1,7 @@
+
 import { useRef, useEffect } from "react";
 import { MessageSquare, Code, LayoutList, Rocket } from "lucide-react";
+
 const steps = [{
   id: 1,
   icon: MessageSquare,
@@ -29,6 +31,7 @@ const steps = [{
   example: "Access your new app immediately and start using it – or request changes and improvements.",
   color: "orange"
 }];
+
 const HowItWorks = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -51,6 +54,34 @@ const HowItWorks = () => {
       }
     };
   }, []);
-  return;
+  
+  return (
+    <section id="how-it-works" ref={sectionRef} className="py-24 bg-gray-950 relative opacity-0 transition-opacity duration-1000 ease-out">
+      <div className="container-custom">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+            How Foundry Works
+          </h2>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            A simple process that takes you from idea to launched product in days, not months
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step) => (
+            <div key={step.id} className="glass-card p-6 rounded-xl group hover:scale-105 transition-all duration-300">
+              <div className={`w-14 h-14 rounded-full bg-${step.color}-500/20 flex items-center justify-center mb-4 group-hover:bg-${step.color}-500/30 transition-colors`}>
+                <step.icon className={`text-${step.color}-400`} size={24} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
+              <p className="text-gray-300 mb-4">{step.description}</p>
+              <p className="text-sm italic text-gray-400">{step.example}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
+
 export default HowItWorks;
