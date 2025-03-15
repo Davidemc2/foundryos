@@ -164,7 +164,7 @@ export default {
         "pulse-slow": "pulse-slow 3s ease-in-out infinite",
         typewriter: "typewriter 4s steps(40) 1s forwards",
         "cursor-blink": "blink 0.7s infinite",
-        "glow-pulse": "glow-pulse 4s ease-in-out infinite", // Changed from 2s to 4s for slower animation
+        "glow-pulse": "glow-pulse 8s ease-in-out infinite", // Changed from 4s to 8s for much slower animation
         "float": "float 6s ease-in-out infinite",
         "float-slow": "float 8s ease-in-out infinite",
         "orbit": "orbit 10s linear infinite",

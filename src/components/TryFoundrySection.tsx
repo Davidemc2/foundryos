@@ -56,6 +56,7 @@ const TryFoundrySection = () => {
                   <EmailCapture 
                     className="max-w-md mx-auto" 
                     buttonText="Join Waitlist" 
+                    placeholder="Your email address"
                   />
                 </div>
               </div>

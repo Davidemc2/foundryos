@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ type EmailCaptureProps = {
 
 const EmailCapture = ({ 
   buttonText = "Get Early Access", 
-  placeholder = "Enter your email to join the waitlist", 
+  placeholder = "Your email address", 
   className = "",
   variant = "default"
 }: EmailCaptureProps) => {

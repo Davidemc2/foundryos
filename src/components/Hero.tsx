@@ -52,7 +52,10 @@ const Hero = () => {
           </p>
           
           <div className="w-full opacity-0 animate-fadeIn animation-delay-1000">
-            <EmailCapture variant="hero" />
+            <EmailCapture 
+              variant="hero" 
+              placeholder="Your email address"
+            />
           </div>
         </div>
 

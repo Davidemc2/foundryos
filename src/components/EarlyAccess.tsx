@@ -48,7 +48,7 @@ const EarlyAccess = () => {
           
           <div className="max-w-md mx-auto space-y-8">
             <EmailCapture 
-              placeholder="Enter your email to join the waitlist"
+              placeholder="Your email address"
               buttonText="Get Early Access" 
               className="animate-fadeIn animation-delay-200 scale-110"
               variant="hero"
