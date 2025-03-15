@@ -7,7 +7,6 @@ import Features from "@/components/Features";
 import FAQ from "@/components/FAQ";
 import EarlyAccess from "@/components/EarlyAccess";
 import Footer from "@/components/Footer";
-import HowItWorks from "@/components/HowItWorks";
 
 const Index = () => {
   useEffect(() => {
@@ -22,7 +21,6 @@ const Index = () => {
         <Hero />
         <TryFoundrySection />
         <Features />
-        <HowItWorks />
         <FAQ />
         <EarlyAccess />
       </main>
