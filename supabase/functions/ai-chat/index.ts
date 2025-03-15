@@ -36,7 +36,7 @@ serve(async (req) => {
   }
 
   try {
-    // Check if OpenAI API key is configured
+    // Validate OpenAI API key
     if (!openAIApiKey) {
       console.error("OpenAI API key is not configured");
       return new Response(JSON.stringify({
@@ -47,11 +47,37 @@ serve(async (req) => {
       });
     }
 
-    const { messages, stage, uploadedFiles } = await req.json();
+    // Parse and validate request body
+    let requestBody;
+    try {
+      requestBody = await req.json();
+    } catch (parseError) {
+      console.error("Failed to parse request body:", parseError);
+      return new Response(JSON.stringify({
+        error: "Invalid request format. Expected JSON body."
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { messages, stage, uploadedFiles } = requestBody;
+    
+    // Validate required fields
+    if (!messages || !Array.isArray(messages)) {
+      console.error("Missing or invalid messages array");
+      return new Response(JSON.stringify({
+        error: "Missing or invalid messages array in request body"
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     console.log(`Processing request for stage: ${stage} with ${messages.length} messages`);
     
     // Add system message based on the current stage
-    const systemMessage = getSystemMessage(stage);
+    const systemMessage = getSystemMessage(stage || 'initial');
     const allMessages = [
       { role: "system", content: systemMessage },
       ...messages
@@ -62,7 +88,7 @@ serve(async (req) => {
       console.log("Files included in the request:", uploadedFiles);
     }
 
-    // Using gpt-4 as per the available models in OpenAI documentation
+    // Use gpt-4o-mini as per the available models
     const modelName = "gpt-4o-mini";
     console.log(`Calling OpenAI API with model: ${modelName}`);
     
@@ -80,9 +106,23 @@ serve(async (req) => {
         }),
       });
 
+      // Log response status for debugging
+      console.log(`OpenAI API response status: ${response.status}`);
+      
+      // Get response text for logging before parsing JSON
+      const responseText = await response.text();
+      console.log(`OpenAI API raw response: ${responseText.substring(0, 500)}${responseText.length > 500 ? '...' : ''}`);
+      
       // Handle non-successful responses
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = JSON.parse(responseText);
+        } catch (jsonError) {
+          console.error("Failed to parse error response as JSON:", jsonError);
+          errorData = { error: { message: "Unknown error: " + responseText.substring(0, 200) } };
+        }
+        
         console.error(`OpenAI API error (${response.status}):`, errorData);
         
         // Provide more detailed error message
@@ -100,7 +140,20 @@ serve(async (req) => {
       }
 
       // Parse the JSON response
-      const data = await response.json();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (jsonError) {
+        console.error("Failed to parse successful response as JSON:", jsonError);
+        return new Response(JSON.stringify({
+          error: "Failed to parse OpenAI API response as JSON",
+          rawResponse: responseText.substring(0, 500)
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      
       console.log("OpenAI API response received successfully");
       
       // Validate response structure
