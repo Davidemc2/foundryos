@@ -36,12 +36,20 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, stage, uploadedFiles } = await req.json();
-    
+    // Check if OpenAI API key is configured
     if (!openAIApiKey) {
-      throw new Error("OpenAI API key is not configured");
+      console.error("OpenAI API key is not configured");
+      return new Response(JSON.stringify({
+        error: "OpenAI API key is not configured. Please add it to the Supabase secrets."
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
+    const { messages, stage, uploadedFiles } = await req.json();
+    console.log(`Processing request for stage: ${stage} with ${messages.length} messages`);
+    
     // Add system message based on the current stage
     const systemMessage = getSystemMessage(stage);
     const allMessages = [
@@ -51,11 +59,11 @@ serve(async (req) => {
     
     // Handle file uploads if present
     if (uploadedFiles && uploadedFiles.length > 0) {
-      // In a real implementation, we would process the files here
       console.log("Files included in the request:", uploadedFiles);
     }
 
     // Call OpenAI API
+    console.log("Calling OpenAI API with model: gpt-4o");
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -63,19 +71,43 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: allMessages,
         temperature: 0.7,
       }),
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      console.error("OpenAI API error:", error);
-      throw new Error(`OpenAI API error: ${error.error?.message || "Unknown error"}`);
+      const errorData = await response.json();
+      console.error("OpenAI API error:", errorData);
+      
+      // Provide more detailed error message
+      const errorMessage = errorData.error?.message || "Unknown error";
+      const errorType = errorData.error?.type || "Unknown error type";
+      const statusCode = response.status;
+      
+      return new Response(JSON.stringify({
+        error: `OpenAI API error (${statusCode}): ${errorType} - ${errorMessage}`,
+        details: errorData
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const data = await response.json();
+    console.log("OpenAI API response received successfully");
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error("Unexpected OpenAI API response format:", data);
+      return new Response(JSON.stringify({
+        error: "Unexpected response format from OpenAI API",
+        details: data
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     
     return new Response(JSON.stringify({
       response: data.choices[0].message.content,
@@ -88,6 +120,7 @@ serve(async (req) => {
     
     return new Response(JSON.stringify({
       error: error.message || "An error occurred during the request",
+      stack: error.stack || "No stack trace available"
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
