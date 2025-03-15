@@ -49,14 +49,15 @@ serve(async (req) => {
       });
     }
 
-    console.log("API key validation passed");
+    console.log(`OpenAI API key validation passed: ${openAIApiKey.substring(0, 3)}...${openAIApiKey.substring(openAIApiKey.length - 4)}`);
 
     // Parse and validate request body
     let requestBody;
     try {
       const requestText = await req.text();
-      console.log(`Request body: ${requestText.substring(0, 100)}...`);
+      console.log(`Request body received, length: ${requestText.length} characters`);
       requestBody = JSON.parse(requestText);
+      console.log(`Request body parsed successfully, containing: ${JSON.stringify(Object.keys(requestBody))}`);
     } catch (parseError) {
       console.error("Failed to parse request body:", parseError);
       return new Response(JSON.stringify({
@@ -80,7 +81,8 @@ serve(async (req) => {
       });
     }
 
-    console.log(`Processing request for stage: ${stage} with ${messages.length} messages`);
+    console.log(`Processing request for stage: ${stage || 'initial'} with ${messages.length} messages`);
+    console.log(`Message sample: ${JSON.stringify(messages[messages.length - 1] || {}).substring(0, 200)}...`);
     
     // Add system message based on the current stage
     const systemMessage = getSystemMessage(stage || 'initial');
@@ -94,24 +96,28 @@ serve(async (req) => {
       console.log("Files included in the request:", uploadedFiles);
     }
 
-    // Use gpt-3.5-turbo as a fallback model since it has higher rate limits
-    // and is more likely to work with free tier accounts
-    const modelName = "gpt-3.5-turbo";
+    // Use gpt-4o-mini for better performance and compatibility with the OPENAI_API_KEY
+    const modelName = "gpt-4o-mini";
     console.log(`Calling OpenAI API with model: ${modelName}`);
     
     try {
       console.log("About to make OpenAI API request");
+      
+      const openAIRequestBody = JSON.stringify({
+        model: modelName,
+        messages: allMessages,
+        temperature: 0.7,
+      });
+      
+      console.log(`OpenAI request body (abbreviated): ${openAIRequestBody.substring(0, 200)}...`);
+      
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${openAIApiKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          model: modelName,
-          messages: allMessages,
-          temperature: 0.7,
-        }),
+        body: openAIRequestBody,
       });
 
       // Log response status for debugging
@@ -119,7 +125,7 @@ serve(async (req) => {
       
       // Get response text for logging before parsing JSON
       const responseText = await response.text();
-      console.log(`OpenAI API raw response: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`);
+      console.log(`OpenAI API raw response (abbreviated): ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`);
       
       // Handle non-successful responses
       if (!response.ok) {
@@ -140,6 +146,17 @@ serve(async (req) => {
             details: "The current API key has reached its usage limit. Please check your OpenAI account billing settings."
           }), {
             status: 429, // Using 429 for rate limit/quota issues
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        
+        // Check for invalid API key
+        if (response.status === 401) {
+          return new Response(JSON.stringify({
+            error: "Invalid OpenAI API key. Please check your API key and try again.",
+            details: errorData
+          }), {
+            status: 401,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
