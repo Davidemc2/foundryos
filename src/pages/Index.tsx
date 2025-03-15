@@ -8,6 +8,7 @@ import FAQ from "@/components/FAQ";
 import EarlyAccess from "@/components/EarlyAccess";
 import Footer from "@/components/Footer";
 import HowItWorks from "@/components/HowItWorks";
+import FounderStory from "@/components/FounderStory";
 
 const Index = () => {
   useEffect(() => {
@@ -21,8 +22,9 @@ const Index = () => {
       <main>
         <Hero />
         <TryFoundrySection />
-        <Features />
         <HowItWorks />
+        <FounderStory />
+        <Features />
         <FAQ />
         <EarlyAccess />
       </main>
