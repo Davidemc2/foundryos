@@ -28,7 +28,7 @@ const TryFoundrySection = () => {
         <div className="max-w-2xl mx-auto transform hover:scale-[1.01] transition-all duration-300">
           <div className="relative group">
             {/* Glow Effect Border - only on focus */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-0 transition-opacity duration-300 group-focus-within:opacity-75"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-0 group-hover:opacity-50 transition-opacity duration-1000"></div>
             
             <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-xl shadow-xl p-5 border border-gray-800">
               <div className="space-y-6 text-center p-4">

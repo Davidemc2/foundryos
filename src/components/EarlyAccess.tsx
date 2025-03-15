@@ -50,7 +50,7 @@ const EarlyAccess = () => {
             <EmailCapture 
               placeholder="Your email address"
               buttonText="Get Early Access" 
-              className="animate-fadeIn animation-delay-200 scale-110"
+              className="scale-110"
               variant="hero"
             />
             

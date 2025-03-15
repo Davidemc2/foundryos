@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -135,8 +134,11 @@ export default {
           "50%": { borderColor: "hsl(var(--primary))" }
         },
         "glow-pulse": {
-          "0%, 100%": { boxShadow: "0 0 5px 0 rgba(124, 58, 237, 0.5)" },
-          "50%": { boxShadow: "0 0 20px 5px rgba(124, 58, 237, 0.7)" }
+          "0%": { opacity: "0.3", boxShadow: "0 0 5px 0 rgba(124, 58, 237, 0.3)" },
+          "25%": { opacity: "0.5", boxShadow: "0 0 10px 2px rgba(124, 58, 237, 0.4)" },
+          "50%": { opacity: "0.7", boxShadow: "0 0 15px 3px rgba(124, 58, 237, 0.5)" },
+          "75%": { opacity: "0.5", boxShadow: "0 0 10px 2px rgba(124, 58, 237, 0.4)" },
+          "100%": { opacity: "0.3", boxShadow: "0 0 5px 0 rgba(124, 58, 237, 0.3)" }
         },
         "float": {
           "0%, 100%": { transform: "translateY(0)" },
@@ -164,7 +166,7 @@ export default {
         "pulse-slow": "pulse-slow 3s ease-in-out infinite",
         typewriter: "typewriter 4s steps(40) 1s forwards",
         "cursor-blink": "blink 0.7s infinite",
-        "glow-pulse": "glow-pulse 8s ease-in-out infinite", // Changed from 4s to 8s for much slower animation
+        "glow-pulse": "glow-pulse 15s ease-in-out infinite", // Changed from 8s to 15s for much slower animation
         "float": "float 6s ease-in-out infinite",
         "float-slow": "float 8s ease-in-out infinite",
         "orbit": "orbit 10s linear infinite",

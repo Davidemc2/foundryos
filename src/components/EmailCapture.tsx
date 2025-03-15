@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -77,14 +78,14 @@ const EmailCapture = ({
     <form onSubmit={handleSubmit} className={`${className} ${variant === "hero" ? "max-w-md mx-auto" : ""}`}>
       <div className={`flex flex-col sm:flex-row gap-3 ${variant === "hero" ? "justify-center" : ""}`}>
         <div className={`relative ${variant === "hero" ? "w-full" : ""}`}>
-          {/* Animated glow border */}
-          <div className={`absolute -inset-0.5 bg-gradient-to-r from-violet-600 via-purple-500 to-violet-400 rounded-md opacity-70 blur-sm animate-glow-pulse transition-opacity duration-300 ${isFocused ? 'opacity-90' : 'opacity-50'}`}></div>
+          {/* Adjusted glow border - removed opacity transition for smoother animation */}
+          <div className={`absolute -inset-0.5 bg-gradient-to-r from-violet-600 via-purple-500 to-violet-400 rounded-md blur-sm animate-glow-pulse ${isFocused ? 'opacity-80' : 'opacity-30'}`}></div>
           <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={placeholder}
-            className={`relative bg-background border-violet-400/20 focus:border-violet-400 focus:ring-1 focus:ring-violet-400/50 transition-all duration-300 ${variant === "hero" ? "h-12" : ""}`}
+            className={`relative bg-background border-violet-400/20 focus:border-violet-400 focus:ring-1 focus:ring-violet-400/50 ${variant === "hero" ? "h-12" : ""}`}
             required
             disabled={isSubmitting}
             onFocus={() => setIsFocused(true)}
@@ -93,7 +94,7 @@ const EmailCapture = ({
         </div>
         <Button 
           type="submit" 
-          className={`btn-glow flex gap-2 transition-all duration-300 ${variant === "hero" ? 
+          className={`btn-glow flex gap-2 ${variant === "hero" ? 
             "bg-violet-700 hover:bg-violet-600 hover:scale-105 hover:shadow-[0_0_20px_rgba(139,92,246,0.7)] h-12 px-6" : 
             "bg-violet-700 hover:bg-violet-600 hover:shadow-[0_0_15px_rgba(139,92,246,0.5)]"}`}
           disabled={isSubmitting}
