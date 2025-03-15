@@ -12,9 +12,10 @@ interface Message {
 
 interface ChatMessageProps {
   message: Message;
+  isLoading?: boolean;
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLoading = false }) => {
   return (
     <div 
       className={`flex items-start ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-slideUp`}
@@ -36,6 +37,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           <MessageResponseContent content={message.content} />
         ) : (
           <p>{message.content}</p>
+        )}
+        {isLoading && (
+          <div className="h-4 w-12 mt-2 flex justify-start space-x-1">
+            <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse"></div>
+            <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse delay-100"></div>
+            <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse delay-200"></div>
+          </div>
         )}
       </div>
     </div>
