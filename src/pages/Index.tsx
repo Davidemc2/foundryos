@@ -7,11 +7,12 @@ import Features from "@/components/Features";
 import FAQ from "@/components/FAQ";
 import EarlyAccess from "@/components/EarlyAccess";
 import Footer from "@/components/Footer";
+import HowItWorks from "@/components/HowItWorks";
 
 const Index = () => {
   useEffect(() => {
     // Update document title
-    document.title = "AIBuilder - Turn your idea into a product with AI";
+    document.title = "Foundry OS - Turn your idea into a product with AI";
   }, []);
 
   return (
@@ -21,6 +22,7 @@ const Index = () => {
         <Hero />
         <TryFoundrySection />
         <Features />
+        <HowItWorks />
         <FAQ />
         <EarlyAccess />
       </main>

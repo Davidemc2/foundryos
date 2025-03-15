@@ -1,7 +1,6 @@
 
 import AudienceSection from "./features/AudienceSection";
 import HowFoundryWorks from "./features/HowFoundryWorks";
-import WhatFoundryDoes from "./features/WhatFoundryDoes";
 import SolutionSection from "./features/SolutionSection";
 
 const Features = () => {
@@ -9,7 +8,6 @@ const Features = () => {
     <>
       <AudienceSection />
       <HowFoundryWorks />
-      <WhatFoundryDoes />
       <SolutionSection />
     </>
   );
