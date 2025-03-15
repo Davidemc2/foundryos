@@ -51,8 +51,6 @@ const HowItWorks = () => {
       }
     };
   }, []);
-  return <section id="how-it-works" className="py-24 bg-gray-950 relative">
-      
-    </section>;
+  return;
 };
 export default HowItWorks;
