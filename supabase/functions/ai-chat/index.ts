@@ -36,6 +36,8 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Edge function invoked - starting execution");
+    
     // Validate OpenAI API key
     if (!openAIApiKey) {
       console.error("OpenAI API key is not configured");
@@ -47,10 +49,14 @@ serve(async (req) => {
       });
     }
 
+    console.log("API key validation passed");
+
     // Parse and validate request body
     let requestBody;
     try {
-      requestBody = await req.json();
+      const requestText = await req.text();
+      console.log(`Request body: ${requestText.substring(0, 100)}...`);
+      requestBody = JSON.parse(requestText);
     } catch (parseError) {
       console.error("Failed to parse request body:", parseError);
       return new Response(JSON.stringify({
@@ -88,11 +94,13 @@ serve(async (req) => {
       console.log("Files included in the request:", uploadedFiles);
     }
 
-    // Use gpt-4o-mini as per the available models
-    const modelName = "gpt-4o-mini";
+    // Use gpt-3.5-turbo as a fallback model since it has higher rate limits
+    // and is more likely to work with free tier accounts
+    const modelName = "gpt-3.5-turbo";
     console.log(`Calling OpenAI API with model: ${modelName}`);
     
     try {
+      console.log("About to make OpenAI API request");
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -111,7 +119,7 @@ serve(async (req) => {
       
       // Get response text for logging before parsing JSON
       const responseText = await response.text();
-      console.log(`OpenAI API raw response: ${responseText.substring(0, 500)}${responseText.length > 500 ? '...' : ''}`);
+      console.log(`OpenAI API raw response: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`);
       
       // Handle non-successful responses
       if (!response.ok) {
@@ -125,7 +133,18 @@ serve(async (req) => {
         
         console.error(`OpenAI API error (${response.status}):`, errorData);
         
-        // Provide more detailed error message
+        // Check specifically for quota errors
+        if (errorData.error?.type === "insufficient_quota") {
+          return new Response(JSON.stringify({
+            error: "OpenAI API quota exceeded. Please update your billing details or use a different API key.",
+            details: "The current API key has reached its usage limit. Please check your OpenAI account billing settings."
+          }), {
+            status: 429, // Using 429 for rate limit/quota issues
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        
+        // Provide more detailed error message for other errors
         const errorMessage = errorData.error?.message || "Unknown error";
         const errorType = errorData.error?.type || "Unknown error type";
         const statusCode = response.status;

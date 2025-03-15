@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -179,17 +178,36 @@ const BuildPage = () => {
           description: `Failed to get AI response: ${response.error}`,
           variant: "destructive"
         });
+        
+        // Add a fallback message for the user when the API fails
+        addAssistantMessage("I'm sorry, I'm having trouble connecting to my AI services right now. This could be due to high traffic or a temporary outage. Please try again in a moment.");
         return;
       }
 
       // Check if the response data contains an error field
       if (response.data && response.data.error) {
         console.error("AI function error:", response.data.error);
-        toast({
-          title: "AI Service Error",
-          description: `${response.data.error}`,
-          variant: "destructive"
-        });
+        
+        // Special handling for quota exceeded errors
+        if (response.data.error.includes("quota exceeded") || response.data.error.includes("insufficient_quota")) {
+          toast({
+            title: "API Limit Reached",
+            description: "The OpenAI API usage limit has been reached. Please update the API key or billing details.",
+            variant: "destructive"
+          });
+          
+          // Add a friendly message about the quota issue
+          addAssistantMessage("I'm sorry, but it looks like the AI service has reached its usage limit. The administrator will need to update the OpenAI API key or billing details. In a production environment, this would be handled more gracefully.");
+        } else {
+          toast({
+            title: "AI Service Error",
+            description: `${response.data.error}`,
+            variant: "destructive"
+          });
+          
+          // Add a generic error message
+          addAssistantMessage("I'm sorry, but there was an error processing your request. Please try again later.");
+        }
         return;
       }
 
@@ -207,6 +225,9 @@ const BuildPage = () => {
         description: "Failed to connect to AI service. Please try again.",
         variant: "destructive"
       });
+      
+      // Add a network error message
+      addAssistantMessage("I'm having trouble connecting to my services. This might be due to network issues or the server being temporarily unavailable. Please try again in a moment.");
     } finally {
       setIsProcessing(false);
       setIsTyping(false);
