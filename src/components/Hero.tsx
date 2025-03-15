@@ -66,6 +66,13 @@ const Hero = () => {
               See How It Works
             </a>
           </div>
+          
+          {/* Founder Quote */}
+          <div className="mt-8 max-w-xl mx-auto opacity-0 animate-fadeIn animation-delay-1200">
+            <p className="text-sm italic text-gray-400 px-4">
+              "I built this because I was tired of writing code, prompting AIs, and piecing together tools every time I had a new idea. Foundry OS is the product I've always needed."
+            </p>
+          </div>
         </div>
 
         {/* Visual Journey - 4-step process with enhanced animations */}
