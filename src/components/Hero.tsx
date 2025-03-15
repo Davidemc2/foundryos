@@ -1,5 +1,6 @@
+
 import { useState, useEffect, useRef } from "react";
-import { ArrowRight, MessageSquare, LayoutList, Code, Rocket, Settings } from "lucide-react";
+import { ArrowRight, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,30 +8,57 @@ import { Button } from "@/components/ui/button";
 const Hero = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [currentExample, setCurrentExample] = useState("");
+  const [exampleIndex, setExampleIndex] = useState(0);
+  const [typingIndex, setTypingIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const placeholders = [
-    "I want to build an app that helps freelancers get paid faster...",
-    "I need an AI assistant that summarizes research papers...",
-    "Create a marketplace for vintage clothing sellers..."
+  const examples = [
+    "I want to build a task manager for freelancers...",
+    "An app that matches mentors with startup founders...",
+    "A marketplace for vintage clothing collectors...",
+    "A subscription service for curated coffee beans..."
   ];
 
+  // Handle the typing animation effect
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    if (typingIndex < examples[exampleIndex].length) {
+      // Continue typing the current example
+      const typingTimeout = setTimeout(() => {
+        setCurrentExample(prev => prev + examples[exampleIndex][typingIndex]);
+        setTypingIndex(prev => prev + 1);
+      }, 50); // Speed of typing
+      
+      return () => clearTimeout(typingTimeout);
+    } else {
+      // Pause at the end of typing before erasing
+      const pauseTimeout = setTimeout(() => {
+        // Start erasing
+        const erasingInterval = setInterval(() => {
+          setCurrentExample(prev => prev.slice(0, -1));
+          if (currentExample.length <= 1) {
+            clearInterval(erasingInterval);
+            setTypingIndex(0);
+            setCurrentExample("");
+            setExampleIndex((prev) => (prev + 1) % examples.length);
+          }
+        }, 30); // Speed of erasing
+        
+        return () => clearInterval(erasingInterval);
+      }, 2000); // Pause at the end
+      
+      return () => clearTimeout(pauseTimeout);
+    }
+  }, [typingIndex, exampleIndex, currentExample, examples]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim()) {
       navigate("/build", { state: { initialPrompt: inputValue } });
     } else {
-      // Redirect with placeholder as fallback if empty
+      // Redirect with current example as fallback if empty
       navigate("/build", { 
-        state: { initialPrompt: placeholders[placeholderIndex] } 
+        state: { initialPrompt: examples[exampleIndex] } 
       });
     }
   };
@@ -64,19 +92,25 @@ const Hero = () => {
             Artificial intelligence that breaks down your idea, builds your app with Lovable.dev, and iterates until it's ready to ship — no coding needed
           </p>
           
-          {/* ChatGPT-style Input Bar */}
-          <div className="w-full max-w-3xl mx-auto mb-12">
+          {/* ChatGPT-style Input Bar with Auto-typing Examples */}
+          <div className="w-full max-w-3xl mx-auto mb-8">
+            {/* Example prompts above input */}
+            <div className="h-6 mb-2 text-violet-400 text-sm">
+              <span className="font-mono">{currentExample}</span>
+              <span className="inline-block w-1 h-4 ml-0.5 bg-violet-400 animate-cursor-blink"></span>
+            </div>
+            
             <form 
               onSubmit={handleSubmit}
               className="relative w-full"
             >
-              <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-violet-500/50 focus-within:border-violet-500/70 transition-all duration-200">
+              <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-lg overflow-hidden transition-all duration-200 focus-within:ring-2 focus-within:ring-violet-500/50 focus-within:border-violet-500/70">
                 <div className="flex-1">
                   <Input
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder={placeholders[placeholderIndex]}
+                    placeholder="Describe your idea..."
                     className="border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 py-6 px-4 text-base placeholder:text-gray-500"
                   />
                 </div>
@@ -84,72 +118,17 @@ const Hero = () => {
                   type="submit"
                   className="mr-2 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 rounded-md transition-colors"
                 >
-                  <ArrowRight className="h-5 w-5" />
+                  Build It <ArrowRight className="h-5 w-5 ml-1" />
                 </Button>
               </div>
             </form>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="https://form.typeform.com/to/qIqMaEXU" 
-              className="px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-colors flex items-center justify-center gap-2 text-base"
-            >
-              Get Early Access
-              <ArrowRight className="h-4 w-4" />
-            </a>
-            
-            <a 
-              href="#how-it-works" 
-              className="px-6 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-200 font-medium hover:bg-gray-700 transition-colors"
-            >
-              See How It Works
-            </a>
-          </div>
-          
           {/* Founder Quote */}
-          <div className="mt-8 max-w-xl mx-auto">
+          <div className="mt-4 max-w-xl mx-auto">
             <p className="text-sm italic text-gray-400 px-4">
-              "I built this because I was tired of writing code, prompting AIs, and piecing together tools every time I had a new idea. Foundry OS is the product I've always needed."
+              "I built this because I was tired of prompting, coding, and never launching. Foundry OS is what I needed."
             </p>
-          </div>
-        </div>
-
-        {/* Visual Journey - 4-step process */}
-        <div className="mt-12 white-card p-8 shadow-xl">
-          <h3 className="heading-sm mb-5 text-gray-800">Your Journey from Idea to Product</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="journey-step">
-              <div className="journey-icon-container bg-violet-100 text-violet-700">
-                <MessageSquare className="h-8 w-8" />
-              </div>
-              <h4 className="font-semibold text-lg text-gray-800 mb-2">Prompt</h4>
-              <p className="text-sm text-gray-600">Describe your product idea in natural language</p>
-            </div>
-            
-            <div className="journey-step">
-              <div className="journey-icon-container bg-violet-100 text-violet-700">
-                <LayoutList size={32} />
-              </div>
-              <h4 className="font-semibold text-lg text-gray-800 mb-2">Task Breakdown</h4>
-              <p className="text-sm text-gray-600">AI breaks down your idea into comprehensive tasks</p>
-            </div>
-            
-            <div className="journey-step">
-              <div className="journey-icon-container bg-violet-100 text-violet-700">
-                <Code size={32} />
-              </div>
-              <h4 className="font-semibold text-lg text-gray-800 mb-2">App Built</h4>
-              <p className="text-sm text-gray-600">Our AI builds your app with Lovable.dev</p>
-            </div>
-            
-            <div className="journey-step">
-              <div className="journey-icon-container bg-violet-100 text-violet-700">
-                <Rocket size={32} />
-              </div>
-              <h4 className="font-semibold text-lg text-gray-800 mb-2">Launch</h4>
-              <p className="text-sm text-gray-600">Your finished product is deployed and ready</p>
-            </div>
           </div>
         </div>
       </div>
