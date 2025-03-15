@@ -1,11 +1,22 @@
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, FileUp, Zap, List, DollarSign, Mail } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowRight, FileUp, Zap, List, DollarSign, Mail, Send, Mic, Paperclip } from "lucide-react";
+
+type MessageType = "user" | "assistant";
+
+interface Message {
+  id: string;
+  type: MessageType;
+  content: string;
+  timestamp: Date;
+}
 
 interface TaskItem {
   id: number;
@@ -14,24 +25,57 @@ interface TaskItem {
 }
 
 const TryFoundrySection = () => {
-  const [prompt, setPrompt] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const [result, setResult] = useState<{
     scope: string;
     tasks: TaskItem[];
-    estimate: string;
+    estimate: { standard: string; fastTrack: string };
   } | null>(null);
+  
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isTyping]);
+
+  const generateUniqueId = () => {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2);
+  };
+
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!prompt.trim()) return;
-
-    setIsGenerating(true);
-
-    // Simulate API response with setTimeout
+    
+    if (!inputValue.trim()) return;
+    
+    // Add user message
+    const userMessage: Message = {
+      id: generateUniqueId(),
+      type: "user",
+      content: inputValue,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue("");
+    setIsTyping(true);
+    setHasInteracted(true);
+    
+    // Simulate typing delay (1.5 - 2.5 seconds)
+    const typingDelay = 1500 + Math.random() * 1000;
+    
     setTimeout(() => {
+      setIsTyping(false);
+      
+      // Generate response
       const mockResult = {
-        scope: `Your ${prompt.split(" ").slice(0, 3).join(" ")}... app will feature a responsive design with user authentication, data storage, and a clean interface. We'll implement core functionality first, then add advanced features in subsequent iterations.`,
+        scope: `Your ${inputValue.split(" ").slice(0, 3).join(" ")}... app will feature a responsive design with user authentication, data storage, and a clean interface. We'll implement core functionality first, then add advanced features in subsequent iterations.`,
         tasks: [
           {
             id: 1,
@@ -54,21 +98,45 @@ const TryFoundrySection = () => {
             description: "Comprehensive testing to ensure functionality works as expected."
           }
         ],
-        estimate: "$3,200 - $4,800"
+        estimate: {
+          standard: "$0 (7-day)",
+          fastTrack: "$250 (2-day fast track)"
+        }
       };
-
+      
       setResult(mockResult);
-      setIsGenerating(false);
-    }, 1500);
-  };
+      
+      // Format the assistant's response
+      const responseContent = `
+**Project Scope:**
+${mockResult.scope}
 
-  const handleSendToBuilder = () => {
-    alert("Feature coming soon! Your project details would be sent to our team.");
+**Task Breakdown:**
+${mockResult.tasks.map(task => `• **${task.title}:** ${task.description}`).join('\n')}
+
+**Estimated Build Cost:**
+${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}
+      `.trim();
+      
+      // Add assistant message
+      const assistantMessage: Message = {
+        id: generateUniqueId(),
+        type: "assistant",
+        content: responseContent,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+    }, typingDelay);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // This would handle file uploads in a real implementation
     console.log("File selected:", e.target.files);
+  };
+
+  const handleSendToBuilder = () => {
+    alert("Your project details have been sent to our team! We'll email you a copy and notify the team.");
   };
 
   return (
@@ -83,101 +151,106 @@ const TryFoundrySection = () => {
 
         <Card className="max-w-4xl mx-auto shadow-lg border-gray-200">
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="prompt" className="sr-only">App Idea</Label>
-                <Textarea 
-                  id="prompt"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe your app idea or what you want to build…"
-                  className="min-h-24 w-full text-base border-gray-300 focus:border-violet-500 resize-none"
-                />
-              </div>
-              
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <FileUp size={16} />
-                <Label htmlFor="file-upload" className="cursor-pointer hover:text-violet-600 transition-colors">
-                  Attach screenshots or documents (optional)
-                </Label>
-                <Input 
-                  type="file" 
-                  id="file-upload" 
-                  className="hidden" 
-                  onChange={handleFileChange}
-                  multiple
-                />
-              </div>
-              
-              <div className="flex justify-end">
-                <Button 
-                  type="submit" 
-                  className="gap-2"
-                  disabled={isGenerating || !prompt.trim()}
-                >
-                  {isGenerating ? (
-                    <>Generating<span className="animate-pulse">...</span></>
-                  ) : (
-                    <>
-                      Generate Scope & Estimate
-                      <Zap size={16} />
-                    </>
+            <div className="flex flex-col h-[500px]">
+              <ScrollArea className="flex-1 pr-4 mb-4" ref={scrollAreaRef}>
+                <div className="space-y-4 pb-2">
+                  {!hasInteracted && (
+                    <div className="flex items-start mb-4 animate-fadeIn">
+                      <div className="max-w-[85%] bg-violet-100 text-gray-800 p-3 rounded-lg rounded-tl-sm shadow-sm">
+                        <p>Hi there! I'm Foundry OS. Describe your app idea, and I'll create a project scope, task breakdown, and cost estimate for you.</p>
+                      </div>
+                    </div>
                   )}
-                </Button>
-              </div>
-            </form>
-
-            {result && (
-              <div className="mt-8 space-y-6 animate-fadeIn">
-                <div className="p-5 rounded-lg bg-gray-50 border border-gray-200">
-                  <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-gray-800">
-                    <span className="text-violet-600 bg-violet-100 p-1 rounded">
-                      <Zap size={18} />
-                    </span>
-                    Project Scope
-                  </h3>
-                  <p className="text-gray-700">{result.scope}</p>
-                </div>
-                
-                <div className="p-5 rounded-lg bg-gray-50 border border-gray-200">
-                  <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-gray-800">
-                    <span className="text-violet-600 bg-violet-100 p-1 rounded">
-                      <List size={18} />
-                    </span>
-                    Task Breakdown
-                  </h3>
-                  <ul className="space-y-3">
-                    {result.tasks.map((task) => (
-                      <li key={task.id} className="flex gap-2">
-                        <span className="text-violet-600 font-medium mt-0.5">•</span>
-                        <div>
-                          <h4 className="font-medium text-gray-800">{task.title}</h4>
-                          <p className="text-sm text-gray-600">{task.description}</p>
+                  
+                  {messages.map((message) => (
+                    <div 
+                      key={message.id} 
+                      className={`flex items-start ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-slideUp`}
+                    >
+                      <div 
+                        className={`max-w-[85%] p-3 rounded-lg shadow-sm ${
+                          message.type === 'user' 
+                            ? 'bg-violet-600 text-white rounded-br-sm ml-auto' 
+                            : 'bg-violet-100 text-gray-800 rounded-tl-sm'
+                        }`}
+                      >
+                        {message.type === 'assistant' ? (
+                          <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: message.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br />') }} />
+                        ) : (
+                          <p>{message.content}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {isTyping && (
+                    <div className="flex items-start animate-fadeIn">
+                      <div className="bg-violet-100 text-gray-800 p-3 rounded-lg rounded-tl-sm shadow-sm">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"></div>
+                          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce animation-delay-200"></div>
+                          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce animation-delay-400"></div>
                         </div>
-                      </li>
-                    ))}
-                  </ul>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div ref={messageEndRef} />
                 </div>
-                
-                <div className="p-5 rounded-lg bg-gray-50 border border-gray-200">
-                  <h3 className="text-lg font-semibold flex items-center gap-2 mb-3 text-gray-800">
-                    <span className="text-violet-600 bg-violet-100 p-1 rounded">
-                      <DollarSign size={18} />
-                    </span>
-                    Cost Estimate
-                  </h3>
-                  <p className="text-xl font-bold text-gray-800">{result.estimate}</p>
-                  <p className="text-sm text-gray-500 mt-1">Based on estimated development hours and complexity</p>
-                </div>
-                
-                <div className="flex justify-center mt-8">
-                  <Button onClick={handleSendToBuilder} className="gap-2 px-6">
+              </ScrollArea>
+              
+              {result && messages.length > 0 && messages[messages.length - 1].type === 'assistant' && (
+                <div className="mb-4 mt-2">
+                  <Button 
+                    onClick={handleSendToBuilder} 
+                    className="w-full gap-2 py-6"
+                    variant="outline"
+                  >
                     Send to Builder
                     <Mail size={16} />
                   </Button>
+                  <p className="text-xs text-gray-500 text-center mt-2">We'll email you a copy and notify the team.</p>
                 </div>
-              </div>
-            )}
+              )}
+              
+              <form onSubmit={handleSendMessage} className="flex items-center gap-2 border rounded-lg p-2 bg-white shadow-sm">
+                <Label htmlFor="file-upload" className="cursor-pointer text-gray-500 hover:text-violet-600 transition-colors p-2">
+                  <Paperclip size={18} />
+                  <Input 
+                    type="file" 
+                    id="file-upload" 
+                    className="hidden" 
+                    onChange={handleFileChange}
+                    multiple
+                  />
+                </Label>
+                
+                <Input 
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Describe your app idea or upload your scope..."
+                  className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
+                />
+                
+                <Button 
+                  type="button"
+                  variant="ghost" 
+                  size="icon"
+                  className="text-gray-500 hover:text-violet-600 transition-colors"
+                >
+                  <Mic size={18} />
+                </Button>
+                
+                <Button 
+                  type="submit" 
+                  size="icon"
+                  disabled={isTyping || !inputValue.trim()}
+                  className="rounded-full"
+                >
+                  <Send size={18} />
+                </Button>
+              </form>
+            </div>
           </CardContent>
         </Card>
       </div>
