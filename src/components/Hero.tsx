@@ -1,5 +1,6 @@
 
-import { ArrowRight, MessageSquare, LayoutList, Code, Rocket } from "lucide-react";
+import { MessageSquare, LayoutList, Code, Rocket } from "lucide-react";
+import EmailCapture from "./EmailCapture";
 
 const Hero = () => {
   return (
@@ -50,28 +51,8 @@ const Hero = () => {
             Artificial intelligence that breaks down your idea, builds your app with Lovable.dev, and iterates until it's ready to ship — no coding needed
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 items-center opacity-0 animate-fadeIn animation-delay-1000">
-            <a 
-              href="https://form.typeform.com/to/qIqMaEXU" 
-              className="btn-glow w-full sm:w-auto px-6 py-3 rounded-full bg-violet-700 text-white font-medium hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-violet-500/40 transform hover:-translate-y-1 hover:scale-105 text-lg animate-bounce-subtle"
-            >
-              Get Early Access
-              <ArrowRight size={16} />
-            </a>
-            
-            <a 
-              href="#how-it-works" 
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-200 font-medium hover:bg-gray-700 transition-all transform hover:scale-105"
-            >
-              See How It Works
-            </a>
-          </div>
-          
-          {/* Founder Quote */}
-          <div className="mt-8 max-w-xl mx-auto opacity-0 animate-fadeIn animation-delay-1200">
-            <p className="text-sm italic text-gray-400 px-4">
-              "I built this because I was tired of writing code, prompting AIs, and piecing together tools every time I had a new idea. Foundry OS is the product I've always needed."
-            </p>
+          <div className="w-full opacity-0 animate-fadeIn animation-delay-1000">
+            <EmailCapture variant="hero" />
           </div>
         </div>
 

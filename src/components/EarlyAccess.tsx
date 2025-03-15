@@ -1,6 +1,7 @@
 
 import { useRef, useEffect } from "react";
-import { ArrowRight, CheckCircle, Rocket } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+import EmailCapture from "./EmailCapture";
 
 const EarlyAccess = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -83,8 +84,8 @@ const EarlyAccess = () => {
             </ul>
           </div>
           
-          {/* Right side: CTA box */}
-          <div className="bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300 transform hover:scale-[1.02]">
+          {/* Right side: Email capture */}
+          <div className="bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Secure Your Spot</h3>
               <div className="mb-6">
@@ -94,23 +95,13 @@ const EarlyAccess = () => {
                 </div>
               </div>
               
-              <a 
-                href="https://form.typeform.com/to/qIqMaEXU" 
-                className="btn-glow w-full px-8 py-4 rounded-xl bg-violet-700 text-white font-bold 
-                  hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg 
-                  hover:shadow-violet-500/40 transform hover:-translate-y-1 text-lg mb-4"
-              >
-                Get Early Access
-                <Rocket size={20} className="animate-bounce-subtle" />
-              </a>
+              <EmailCapture 
+                className="mb-6"
+                placeholder="youremail@example.com"
+                buttonText="Join Now" 
+              />
               
               <p className="text-sm text-gray-500">No credit card required to join the waitlist</p>
-              
-              <div className="mt-6 text-center">
-                <a href="#pledge-support" className="text-violet-600 hover:text-violet-700 text-sm">
-                  Or pledge support for the project <ArrowRight size={12} className="inline" />
-                </a>
-              </div>
             </div>
           </div>
         </div>

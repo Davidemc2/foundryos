@@ -1,7 +1,6 @@
 
-import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import EmailCapture from "./EmailCapture";
 
 const placeholders = [
   "I want to build an app that helps creators...",
@@ -53,14 +52,11 @@ const TryFoundrySection = () => {
                   </div>
                 </div>
                 
-                <div className="mt-4">
-                  <Link to="/early-access">
-                    <Button 
-                      className="px-8 py-6 rounded-full bg-violet-600 hover:bg-violet-700 transition-all w-full"
-                    >
-                      Get Early Access <ArrowRight size={16} />
-                    </Button>
-                  </Link>
+                <div className="mt-6">
+                  <EmailCapture 
+                    className="max-w-md mx-auto" 
+                    buttonText="Join Waitlist" 
+                  />
                 </div>
               </div>
             </div>
