@@ -48,7 +48,7 @@ const FeatureSection = ({
     <section 
       id={id} 
       ref={sectionRef}
-      className={`py-20 md:py-28 opacity-0 transition-opacity duration-1000 ease-out ${bgClass} relative`}
+      className={`py-10 md:py-14 opacity-0 transition-opacity duration-1000 ease-out ${bgClass} relative`}
     >
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,hsl(var(--primary)/0.08)_0%,transparent_100%)]" />
       <div className="container-custom">

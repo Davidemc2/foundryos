@@ -3,7 +3,7 @@ import { ArrowRight, MessageSquare, LayoutList, Code, Rocket } from "lucide-reac
 
 const Hero = () => {
   return (
-    <section className="section-dark pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+    <section className="section-dark pt-32 pb-10 md:pt-40 md:pb-16 relative overflow-hidden">
       {/* Enhanced floating elements */}
       <div className="floating-element top-20 left-20 w-[300px] h-[300px] animate-float"></div>
       <div className="floating-element bottom-20 right-20 w-[400px] h-[400px] animate-float-slow animation-delay-800"></div>
