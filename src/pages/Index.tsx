@@ -8,6 +8,7 @@ import HowItWorks from "@/components/HowItWorks";
 import FAQ from "@/components/FAQ";
 import EarlyAccess from "@/components/EarlyAccess";
 import Footer from "@/components/Footer";
+import WhyIBuiltSection from "@/components/features/WhyIBuiltSection";
 
 const Index = () => {
   useEffect(() => {
@@ -21,6 +22,7 @@ const Index = () => {
       <main>
         <Hero />
         <TryFoundrySection />
+        <WhyIBuiltSection />
         <Features />
         <HowItWorks />
         <FAQ />

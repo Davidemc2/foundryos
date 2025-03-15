@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import EarlyAccessConfirmation from "./pages/EarlyAccessConfirmation";
 import NotFound from "./pages/NotFound";
+import BuildPage from "./pages/BuildPage";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/early-access" element={<EarlyAccessConfirmation />} />
+          <Route path="/build" element={<BuildPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
