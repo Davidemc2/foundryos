@@ -75,9 +75,9 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Visual Journey - 4-step process with enhanced animations */}
-        <div className="mt-24 white-card p-8 opacity-0 animate-slideUp animation-delay-1200 shadow-xl">
-          <h3 className="heading-sm mb-10 text-gray-800">Your Journey from Idea to Product</h3>
+        {/* Visual Journey - 4-step process with enhanced animations - REDUCED MARGIN */}
+        <div className="mt-12 white-card p-8 opacity-0 animate-slideUp animation-delay-1200 shadow-xl">
+          <h3 className="heading-sm mb-5 text-gray-800">Your Journey from Idea to Product</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="journey-step group opacity-0 animate-fadeIn animation-delay-1400">
               <div className="journey-icon-container bg-violet-100 text-violet-700 group-hover:bg-violet-700 group-hover:text-white hover:shadow-md">
