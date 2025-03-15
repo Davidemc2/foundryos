@@ -173,9 +173,21 @@ const BuildPage = () => {
       setIsTyping(false);
 
       if (response.error) {
+        console.error("AI response error:", response.error);
         toast({
           title: "Error",
-          description: `Failed to get AI response: ${response.error.message}`,
+          description: `Failed to get AI response: ${response.error}`,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check if the response data contains an error field
+      if (response.data && response.data.error) {
+        console.error("AI function error:", response.data.error);
+        toast({
+          title: "AI Service Error",
+          description: `${response.data.error}`,
           variant: "destructive"
         });
         return;
@@ -191,8 +203,8 @@ const BuildPage = () => {
     } catch (error) {
       console.error("Error calling AI function:", error);
       toast({
-        title: "Error",
-        description: "Failed to get AI response. Please try again.",
+        title: "Connection Error",
+        description: "Failed to connect to AI service. Please try again.",
         variant: "destructive"
       });
     } finally {

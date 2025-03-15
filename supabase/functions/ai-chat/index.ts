@@ -62,59 +62,76 @@ serve(async (req) => {
       console.log("Files included in the request:", uploadedFiles);
     }
 
-    // Call OpenAI API
-    console.log("Calling OpenAI API with model: gpt-4o");
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${openAIApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: allMessages,
-        temperature: 0.7,
-      }),
-    });
+    // Using gpt-4 as per the available models in OpenAI documentation
+    const modelName = "gpt-4o-mini";
+    console.log(`Calling OpenAI API with model: ${modelName}`);
+    
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${openAIApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: allMessages,
+          temperature: 0.7,
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("OpenAI API error:", errorData);
+      // Handle non-successful responses
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(`OpenAI API error (${response.status}):`, errorData);
+        
+        // Provide more detailed error message
+        const errorMessage = errorData.error?.message || "Unknown error";
+        const errorType = errorData.error?.type || "Unknown error type";
+        const statusCode = response.status;
+        
+        return new Response(JSON.stringify({
+          error: `OpenAI API error (${statusCode}): ${errorType} - ${errorMessage}`,
+          details: errorData
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Parse the JSON response
+      const data = await response.json();
+      console.log("OpenAI API response received successfully");
       
-      // Provide more detailed error message
-      const errorMessage = errorData.error?.message || "Unknown error";
-      const errorType = errorData.error?.type || "Unknown error type";
-      const statusCode = response.status;
+      // Validate response structure
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        console.error("Unexpected OpenAI API response format:", data);
+        return new Response(JSON.stringify({
+          error: "Unexpected response format from OpenAI API",
+          details: data
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       
+      // Return successful response
       return new Response(JSON.stringify({
-        error: `OpenAI API error (${statusCode}): ${errorType} - ${errorMessage}`,
-        details: errorData
+        response: data.choices[0].message.content,
+        usage: data.usage,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    } catch (apiError) {
+      console.error("Error calling OpenAI API:", apiError);
+      return new Response(JSON.stringify({
+        error: "Failed to communicate with OpenAI API",
+        details: apiError.message || "Unknown API error"
       }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    const data = await response.json();
-    console.log("OpenAI API response received successfully");
-    
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      console.error("Unexpected OpenAI API response format:", data);
-      return new Response(JSON.stringify({
-        error: "Unexpected response format from OpenAI API",
-        details: data
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    
-    return new Response(JSON.stringify({
-      response: data.choices[0].message.content,
-      usage: data.usage,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
   } catch (error) {
     console.error("Error in AI chat function:", error);
     
