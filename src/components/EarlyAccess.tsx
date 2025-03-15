@@ -1,9 +1,12 @@
 
 import { useRef, useEffect } from "react";
-import { ArrowRight, CheckCircle, Rocket } from "lucide-react";
+import { ArrowRight, CheckCircle, Rocket, Clock, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const EarlyAccess = () => {
+  const navigate = useNavigate();
   const sectionRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -25,91 +28,137 @@ const EarlyAccess = () => {
     };
   }, []);
   
+  const handleGetStarted = () => {
+    navigate("/build");
+  };
+  
   return (
-    <section id="pledge-support" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out" style={{
-      backgroundColor: "#4314A0"
-    }}>
+    <section id="early-access" ref={sectionRef} className="relative py-24 opacity-0 transition-opacity duration-1000 ease-out bg-gray-50">
       {/* Background elements and gradients */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_50%_at_50%_50%,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
-      <div className="floating-element top-20 left-20 w-[200px] h-[200px] animate-float"></div>
-      <div className="floating-element bottom-20 right-20 w-[300px] h-[300px] animate-float-slow"></div>
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(50%_50%_at_50%_50%,rgba(123,104,238,0.05)_0%,transparent_100%)]" />
       
       <div className="container-custom">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
             Get Early Access to Foundry OS
           </h2>
-          <p className="text-xl text-violet-100 max-w-3xl mx-auto mb-6">
-            Only 1000 early builder spots available — secure yours now.
-          </p>
-          <p className="text-sm text-violet-200 italic animate-pulse">
-            15 builders have submitted ideas this week
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Choose your build speed — no code needed.
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          {/* Left side: Value points */}
-          <div className="bg-violet-800/30 backdrop-blur-sm rounded-xl p-8 border border-white/10">
-            <h3 className="text-2xl font-bold text-white mb-6">Build Your Product Fast</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+          {/* Left side: Pricing tiers */}
+          <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Choose Your Build Speed</h3>
+            <ul className="space-y-6">
+              <li className="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="mt-1 bg-violet-100 p-2 rounded-full">
+                  <Clock className="text-violet-700" size={20} />
+                </div>
                 <div>
-                  <p className="text-white font-semibold">Free 7-day build</p>
-                  <p className="text-violet-200 text-sm">Standard build timeline, perfect for most ideas</p>
+                  <p className="text-gray-900 font-semibold flex items-center">
+                    Free
+                    <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">Standard</span>
+                  </p>
+                  <p className="text-gray-600">Delivered in 2 weeks</p>
                 </div>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+              
+              <li className="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="mt-1 bg-violet-100 p-2 rounded-full">
+                  <Zap className="text-violet-700" size={20} />
+                </div>
                 <div>
-                  <p className="text-white font-semibold">$250 2-day fast build</p>
-                  <p className="text-violet-200 text-sm">Priority processing for urgent projects</p>
+                  <p className="text-gray-900 font-semibold">$100</p>
+                  <p className="text-gray-600">Delivered in 5 days</p>
                 </div>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+              
+              <li className="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="mt-1 bg-violet-100 p-2 rounded-full">
+                  <Zap className="text-violet-700" size={20} />
+                </div>
                 <div>
-                  <p className="text-white font-semibold">Unlimited iterations</p>
-                  <p className="text-violet-200 text-sm">Refine your product until it's perfect</p>
+                  <p className="text-gray-900 font-semibold">$250</p>
+                  <p className="text-gray-600">Delivered in 2 days</p>
                 </div>
               </li>
-              <li className="flex items-start">
-                <CheckCircle className="text-green-400 mr-3 flex-shrink-0 mt-1" size={20} />
+              
+              <li className="flex items-start gap-4 p-4 rounded-lg bg-violet-50 hover:bg-violet-100 transition-colors">
+                <div className="mt-1 bg-violet-200 p-2 rounded-full">
+                  <Rocket className="text-violet-700" size={20} />
+                </div>
                 <div>
-                  <p className="text-white font-semibold">Full source code ownership</p>
-                  <p className="text-violet-200 text-sm">You own everything Foundry builds for you</p>
+                  <p className="text-gray-900 font-semibold flex items-center">
+                    $500
+                    <span className="ml-2 px-2 py-1 bg-violet-200 text-violet-700 text-xs rounded-full">Popular</span>
+                  </p>
+                  <p className="text-gray-600">Delivered in 24 hours</p>
                 </div>
               </li>
             </ul>
+            
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-gray-500 text-sm">All plans include:</p>
+              <ul className="mt-2 space-y-2">
+                <li className="flex items-center gap-2 text-sm text-gray-600">
+                  <CheckCircle className="text-green-500" size={16} />
+                  <span>Full ownership of code</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm text-gray-600">
+                  <CheckCircle className="text-green-500" size={16} />
+                  <span>Unlimited revisions</span>
+                </li>
+                <li className="flex items-center gap-2 text-sm text-gray-600">
+                  <CheckCircle className="text-green-500" size={16} />
+                  <span>Deploy-ready codebase</span>
+                </li>
+              </ul>
+            </div>
           </div>
           
           {/* Right side: CTA box */}
-          <div className="bg-white rounded-xl p-8 shadow-2xl hover:shadow-violet-500/20 transition-all duration-300 transform hover:scale-[1.02]">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Secure Your Spot</h3>
-              <div className="mb-6">
-                <p className="text-lg text-gray-600 mb-2">Founder pricing available to first 200 users</p>
-                <div className="inline-block px-4 py-2 rounded-full bg-violet-100 text-violet-800 font-bold">
-                  Limited Time Offer
-                </div>
+          <div className="bg-white rounded-xl p-8 shadow-xl border border-violet-100 relative overflow-hidden">
+            {/* Background gradient */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-violet-100 rounded-full -mr-20 -mt-20 opacity-60"></div>
+            
+            <div className="relative z-10">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Secure Your Build Slot</h3>
+                <p className="text-gray-600">Start building your product today</p>
               </div>
               
-              <a 
-                href="https://form.typeform.com/to/qIqMaEXU" 
-                className="btn-glow w-full px-8 py-4 rounded-xl bg-violet-700 text-white font-bold 
-                  hover:bg-violet-600 transition-all flex items-center justify-center gap-2 shadow-lg 
-                  hover:shadow-violet-500/40 transform hover:-translate-y-1 text-lg mb-4"
+              <button 
+                onClick={handleGetStarted}
+                className="btn-glow w-full px-8 py-4 rounded-xl bg-violet-600 text-white font-bold 
+                  hover:bg-violet-700 transition-all flex items-center justify-center gap-2 shadow-lg 
+                  hover:shadow-violet-500/30 transform hover:-translate-y-1 text-lg mb-6"
               >
-                Get Early Access
-                <Rocket size={20} className="animate-bounce-subtle" />
-              </a>
+                Secure Your Build Slot
+                <ArrowRight size={20} />
+              </button>
               
-              <p className="text-sm text-gray-500">No credit card required to join the waitlist</p>
+              <div className="text-center text-sm text-gray-500 mb-6">
+                Only 1,000 early builder spots available
+              </div>
               
-              <div className="mt-6 text-center">
-                <a href="#pledge-support" className="text-violet-600 hover:text-violet-700 text-sm">
-                  Or pledge support for the project <ArrowRight size={12} className="inline" />
-                </a>
+              <div className="bg-violet-50 rounded-lg p-4 text-center">
+                <p className="text-violet-700 font-medium">
+                  15 builders submitted this week
+                </p>
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                    <img src="/placeholder.svg" alt="Founder" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-gray-900 font-medium">– John Doe</p>
+                    <p className="text-gray-500 text-sm">Founder of Foundry OS</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
