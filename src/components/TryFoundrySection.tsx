@@ -1,9 +1,8 @@
-
 import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Paperclip, X } from "lucide-react";
+import { ArrowRight, Paperclip, Plus, X } from "lucide-react";
 
 const TryFoundrySection = () => {
   const navigate = useNavigate();
@@ -59,7 +58,7 @@ const TryFoundrySection = () => {
       });
     }, 1500);
   };
-
+  
   return (
     <section className="py-16 relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 to-gray-950" />
@@ -78,7 +77,7 @@ const TryFoundrySection = () => {
         <div className="max-w-2xl mx-auto transform hover:scale-[1.01] transition-all duration-300">
           <div className="relative group">
             {/* Glow Effect Border */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse-slow"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-75 transition duration-1000 animate-pulse-slow"></div>
             
             <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-xl shadow-xl p-5 border border-gray-800">
               <form 
@@ -98,19 +97,32 @@ const TryFoundrySection = () => {
                     type="text"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="I want to build an AI tool that helps creators..."
-                    className="pr-12 py-6 text-base bg-gray-800/50 border-gray-700 focus-visible:ring-violet-500 focus-visible:border-violet-500"
+                    placeholder="I want to build an app that helps creators..."
+                    className="pr-24 py-6 text-base bg-gray-800/50 border-gray-700 focus-visible:ring-violet-500 focus-visible:border-violet-500 focus:shadow-[0_0_10px_rgba(168,85,247,0.5)] transition-shadow duration-300"
                     disabled={isThinking}
                   />
                   
-                  <button
-                    type="button"
-                    className="absolute right-16 top-1/2 -translate-y-1/2 text-gray-400 hover:text-violet-400 transition-colors"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isThinking}
-                  >
-                    <Paperclip size={16} />
-                  </button>
+                  <div className="absolute right-16 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+                    <button
+                      type="button"
+                      className="text-gray-400 hover:text-violet-400 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isThinking}
+                      title="Attach a file"
+                    >
+                      <Paperclip size={16} />
+                    </button>
+                    
+                    <button
+                      type="button"
+                      className="text-gray-400 hover:text-violet-400 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isThinking}
+                      title="Upload your idea"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
                   
                   <input
                     type="file"
@@ -123,7 +135,7 @@ const TryFoundrySection = () => {
                   
                   <Button 
                     type="submit"
-                    className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-violet-600 hover:bg-violet-700 transition-all btn-glow ${isThinking ? 'opacity-70' : ''}`}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-violet-600 hover:bg-violet-700 transition-all ${isThinking ? 'opacity-70' : ''}`}
                     disabled={isThinking}
                   >
                     {isThinking ? (
@@ -136,7 +148,7 @@ const TryFoundrySection = () => {
                       </span>
                     ) : (
                       <>
-                        Start Building <ArrowRight size={16} />
+                        Let's Build It <ArrowRight size={16} />
                       </>
                     )}
                   </Button>
@@ -160,17 +172,7 @@ const TryFoundrySection = () => {
                     </button>
                   </div>
                 )}
-                
-                {!uploadedFile && (
-                  <div className="mt-2 text-xs text-gray-500 text-center">
-                    <span>Drag & drop a file or click the paperclip to upload</span>
-                  </div>
-                )}
               </form>
-              
-              <p className="text-xs text-gray-500 mt-3 text-center">
-                No login needed. Just tell us what you're building.
-              </p>
             </div>
           </div>
           
