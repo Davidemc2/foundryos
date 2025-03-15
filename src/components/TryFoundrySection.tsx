@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const TryFoundrySection = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  // Cycling through placeholders with typing animation
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (placeholderIndex + 1) % placeholders.length;
@@ -43,7 +45,7 @@ const TryFoundrySection = () => {
     
     return () => clearInterval(interval);
   }, [placeholderIndex]);
-
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setUploadedFile(e.target.files[0]);
@@ -73,26 +75,26 @@ const TryFoundrySection = () => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigateToBuild();
-  };
-
-  const navigateToBuild = () => {
+    
+    if (!prompt.trim() && !uploadedFile) return;
+    
     // Show thinking animation
     setIsThinking(true);
     
-    // Redirect to build page after a brief delay
+    // Redirect after a brief delay to simulate thinking
     setTimeout(() => {
+      // Navigate to build page with prompt and file info
       navigate("/build", { 
         state: { 
           initialPrompt: prompt,
           hasAttachment: !!uploadedFile 
         } 
       });
-    }, 1000);
+    }, 1500);
   };
   
   return (
-    <section className="py-20 relative overflow-hidden cursor-pointer" onClick={navigateToBuild}>
+    <section className="py-20 relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 to-gray-950" />
       
       {/* Animated background effects */}
@@ -117,7 +119,6 @@ const TryFoundrySection = () => {
                 className="relative"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                onClick={(e) => e.stopPropagation()} // Prevent clicks on form from triggering parent click
               >
                 <div className="flex items-center space-x-2 mb-1">
                   <span className="text-xl">⚒️</span>
