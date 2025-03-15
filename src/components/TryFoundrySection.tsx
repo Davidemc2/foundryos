@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -76,8 +77,8 @@ const TryFoundrySection = () => {
         
         <div className="max-w-2xl mx-auto transform hover:scale-[1.01] transition-all duration-300">
           <div className="relative group">
-            {/* Glow Effect Border */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-75 transition duration-1000 animate-pulse-slow"></div>
+            {/* Glow Effect Border - only on focus */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-0 transition-opacity duration-300 group-focus-within:opacity-75"></div>
             
             <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-xl shadow-xl p-5 border border-gray-800">
               <form 
@@ -98,7 +99,7 @@ const TryFoundrySection = () => {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="I want to build an app that helps creators..."
-                    className="pr-24 py-6 text-base bg-gray-800/50 border-gray-700 focus-visible:ring-violet-500 focus-visible:border-violet-500 focus:shadow-[0_0_10px_rgba(168,85,247,0.5)] transition-shadow duration-300"
+                    className="pr-24 py-6 text-base bg-gray-800/50 border-gray-700 focus-visible:ring-violet-500 focus-visible:border-violet-500 transition-shadow duration-300"
                     disabled={isThinking}
                   />
                   

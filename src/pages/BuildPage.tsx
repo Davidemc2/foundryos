@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -146,7 +145,7 @@ const BuildPage = () => {
     
     setResult(mockResult);
     
-    // Show first message after a short delay
+    // Show first message after a short delay - PROJECT SCOPE
     setTimeout(() => {
       setIsTyping(false);
       
