@@ -24,7 +24,7 @@ export const MessageResponseContent: React.FC<MessageResponseContentProps> = ({ 
           h2: ({ node, ...props }) => <h2 className="text-lg font-bold my-2" {...props} />,
           h3: ({ node, ...props }) => <h3 className="text-md font-bold my-2" {...props} />,
           p: ({ node, ...props }) => <p className="my-2" {...props} />,
-          code: ({ node, className, children, ...props }: Components["code"]) => {
+          code: ({ className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || "");
             return !className?.includes("language-") ? (
               <code className="bg-gray-700 px-1 py-0.5 rounded text-xs" {...props}>
