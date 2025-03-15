@@ -5,12 +5,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowRight, FileUp, Zap, List, DollarSign, Mail, Send, Mic, Paperclip, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Send, Mic, Paperclip, FileUp, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChatMessage } from "@/components/chat/ChatMessage";
+import { FilePreview } from "@/components/chat/FilePreview";
+import { TypingIndicator } from "@/components/chat/TypingIndicator";
+import { MessageResponseContent } from "@/components/chat/MessageResponseContent"; 
+import { BuildEmailForm } from "@/components/chat/BuildEmailForm";
+import { ThankYouCard } from "@/components/chat/ThankYouCard";
 
 type MessageType = "user" | "assistant";
 
@@ -46,8 +54,8 @@ const BuildPage = () => {
     estimate: { standard: string; fastTrack: string };
   } | null>(null);
   const [showThankYou, setShowThankYou] = useState(false);
-  const [email, setEmail] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [currentResponseStep, setCurrentResponseStep] = useState(0);
   
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -58,7 +66,7 @@ const BuildPage = () => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isTyping]);
+  }, [messages, isTyping, currentResponseStep]);
 
   // Add initial welcome message
   useEffect(() => {
@@ -103,72 +111,88 @@ const BuildPage = () => {
     setUploadedFiles([]);
     setIsTyping(true);
     setHasInteracted(true);
+    setCurrentResponseStep(0);
     
-    // Simulate typing delay (1.5 - 2.5 seconds)
-    const typingDelay = 1500 + Math.random() * 1000;
+    // Generate mock data response
+    const mockResult = {
+      scope: `Your ${inputValue.split(" ").slice(0, 3).join(" ")}... app will feature a responsive design with user authentication, data storage, and a clean interface. We'll implement core functionality first, then add advanced features in subsequent iterations.`,
+      tasks: [
+        {
+          id: 1,
+          title: "User Authentication System",
+          description: "Login, signup, password reset flows with secure token-based authentication."
+        },
+        {
+          id: 2, 
+          title: "Core Functionality Implementation",
+          description: "Building the primary features described in your idea, including database integration."
+        },
+        {
+          id: 3,
+          title: "Responsive UI Design",
+          description: "Creating a modern, mobile-first interface that works across all devices."
+        },
+        {
+          id: 4,
+          title: "Testing & QA",
+          description: "Comprehensive testing to ensure functionality works as expected."
+        }
+      ],
+      estimate: {
+        standard: "$0 (7-day)",
+        fastTrack: "$250 (2-day fast track)"
+      }
+    };
     
+    setResult(mockResult);
+    
+    // Show first message after a short delay
     setTimeout(() => {
       setIsTyping(false);
       
-      // Generate response
-      const mockResult = {
-        scope: `Your ${inputValue.split(" ").slice(0, 3).join(" ")}... app will feature a responsive design with user authentication, data storage, and a clean interface. We'll implement core functionality first, then add advanced features in subsequent iterations.`,
-        tasks: [
-          {
-            id: 1,
-            title: "User Authentication System",
-            description: "Login, signup, password reset flows with secure token-based authentication."
-          },
-          {
-            id: 2, 
-            title: "Core Functionality Implementation",
-            description: "Building the primary features described in your idea, including database integration."
-          },
-          {
-            id: 3,
-            title: "Responsive UI Design",
-            description: "Creating a modern, mobile-first interface that works across all devices."
-          },
-          {
-            id: 4,
-            title: "Testing & QA",
-            description: "Comprehensive testing to ensure functionality works as expected."
-          }
-        ],
-        estimate: {
-          standard: "$0 (7-day)",
-          fastTrack: "$250 (2-day fast track)"
-        }
-      };
-      
-      setResult(mockResult);
-      
-      // Format the assistant's response
-      const responseContent = `
-Got it! Let me break that down for you:
-
-📄 **Project Scope:**
-${mockResult.scope}
-
-✅ **Task Breakdown:**
-${mockResult.tasks.map(task => `• **${task.title}:** ${task.description}`).join('\n')}
-
-Based on this task breakdown, here's your build estimate:
-
-💰 **Estimated Build Cost:**
-${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}
-      `.trim();
-      
-      // Add assistant message
-      const assistantMessage: Message = {
+      // First message - Project Scope
+      const scopeMessage: Message = {
         id: generateUniqueId(),
         type: "assistant",
-        content: responseContent,
+        content: `Got it! Here's the scope based on what you shared:\n\n📄 **Project Scope:**\n${mockResult.scope}`,
         timestamp: new Date()
       };
       
-      setMessages(prev => [...prev, assistantMessage]);
-    }, typingDelay);
+      setMessages(prev => [...prev, scopeMessage]);
+      setCurrentResponseStep(1);
+      setIsTyping(true);
+      
+      // Second message - Task Breakdown after 1.5s
+      setTimeout(() => {
+        setIsTyping(false);
+        
+        const tasksMessage: Message = {
+          id: generateUniqueId(),
+          type: "assistant",
+          content: `To build this, here are the main tasks:\n\n✅ **Task Breakdown:**\n${mockResult.tasks.map(task => `• **${task.title}:** ${task.description}`).join('\n')}`,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, tasksMessage]);
+        setCurrentResponseStep(2);
+        setIsTyping(true);
+        
+        // Third message - Cost Estimate after another 1.5s
+        setTimeout(() => {
+          setIsTyping(false);
+          
+          const costMessage: Message = {
+            id: generateUniqueId(),
+            type: "assistant",
+            content: `💰 **Estimated Cost:**\n${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}`,
+            timestamp: new Date()
+          };
+          
+          setMessages(prev => [...prev, costMessage]);
+          setCurrentResponseStep(3);
+        }, 1500);
+      }, 1500);
+    }, 1000);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,24 +206,13 @@ ${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}
     }
   };
 
-  const handleSendToBuilder = () => {
+  const handleSendToBuilder = (email: string) => {
+    // In a real app, this would send the request to the server
+    toast({
+      title: "Success!",
+      description: "Your build request has been sent to the Foundry team.",
+    });
     setShowThankYou(true);
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handleSubmitEmail = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      // In a real app, this would send the email to the server
-      toast({
-        title: "Success!",
-        description: "Your build request has been sent to the Foundry team.",
-      });
-      navigate("/");
-    }
   };
 
   const handleBackToHome = () => {
@@ -212,51 +225,31 @@ ${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}
     }
   };
 
+  const handleFileDrop = (e: React.DragEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const filesArray = Array.from(e.dataTransfer.files);
+      setUploadedFiles(prev => [...prev, ...filesArray]);
+      toast({
+        title: "File uploaded",
+        description: `${filesArray.length} file(s) added to your message`,
+      });
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleRemoveFile = (fileToRemove: File) => {
+    setUploadedFiles(uploadedFiles.filter(file => file !== fileToRemove));
+  };
+
   if (showThankYou) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full shadow-lg border-violet-500/20 bg-gray-900 text-white">
-          <CardContent className="p-8">
-            <div className="text-center mb-6">
-              <div className="bg-violet-600/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                <Mail size={32} className="text-violet-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Thanks for your submission!</h2>
-              <p className="text-gray-400">We'll review your idea and send you our thoughts.</p>
-            </div>
-            
-            <form onSubmit={handleSubmitEmail} className="space-y-4">
-              <div>
-                <Label htmlFor="email" className="text-gray-300">Where should we send the details?</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  placeholder="your@email.com" 
-                  value={email} 
-                  onChange={handleEmailChange}
-                  className="mt-1 bg-gray-800 border-gray-700 text-white"
-                  required
-                />
-              </div>
-              
-              <Button type="submit" className="w-full bg-violet-600 hover:bg-violet-700">
-                Submit
-              </Button>
-              
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full gap-2 border-gray-700 text-gray-300 hover:bg-gray-800"
-                onClick={handleBackToHome}
-              >
-                <ArrowLeft size={16} />
-                Back to Homepage
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <ThankYouCard onBackToHome={handleBackToHome} />;
   }
 
   return (
@@ -277,52 +270,19 @@ ${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}
       </div>
       
       <div className="flex-1 container-custom py-8">
-        <Card className="mx-auto shadow-lg border border-violet-500/30 bg-gray-900 max-w-4xl animate-pulse-slow">
+        <Card className="mx-auto shadow-lg border border-violet-500/20 bg-gray-900 max-w-4xl">
           <CardContent className="p-6">
             <div className="flex flex-col h-[600px]">
               <ScrollArea className="flex-1 pr-4 mb-4" ref={scrollAreaRef}>
                 <div className="space-y-4 pb-2">
                   {messages.map((message) => (
-                    <div 
-                      key={message.id} 
-                      className={`flex items-start ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-slideUp`}
-                    >
-                      {message.type === 'assistant' && (
-                        <Avatar className="mr-2 h-8 w-8 bg-violet-900/50 border border-violet-600/30">
-                          <AvatarFallback className="text-white">OS</AvatarFallback>
-                        </Avatar>
-                      )}
-                      
-                      <div 
-                        className={`max-w-[85%] p-3 rounded-lg shadow-md ${
-                          message.type === 'user' 
-                            ? 'bg-violet-600 text-white rounded-br-sm ml-auto' 
-                            : 'bg-gray-800 text-gray-100 rounded-tl-sm border border-gray-700'
-                        }`}
-                      >
-                        {message.type === 'assistant' ? (
-                          <div className="prose prose-sm max-w-none prose-invert" dangerouslySetInnerHTML={{ __html: message.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br />') }} />
-                        ) : (
-                          <p>{message.content}</p>
-                        )}
-                      </div>
-                    </div>
+                    <ChatMessage 
+                      key={message.id}
+                      message={message}
+                    />
                   ))}
                   
-                  {isTyping && (
-                    <div className="flex items-start animate-fadeIn">
-                      <Avatar className="mr-2 h-8 w-8 bg-violet-900/50 border border-violet-600/30">
-                        <AvatarFallback className="text-white">OS</AvatarFallback>
-                      </Avatar>
-                      <div className="bg-gray-800 text-gray-100 p-3 rounded-lg rounded-tl-sm border border-gray-700 shadow-md">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"></div>
-                          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce animation-delay-200"></div>
-                          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce animation-delay-400"></div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  {isTyping && <TypingIndicator />}
                   
                   <div ref={messageEndRef} />
                 </div>
@@ -331,73 +291,77 @@ ${mockResult.estimate.standard} or ${mockResult.estimate.fastTrack}
               {uploadedFiles.length > 0 && (
                 <div className="mb-2 flex flex-wrap gap-2">
                   {uploadedFiles.map((file, index) => (
-                    <div key={index} className="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300 flex items-center">
-                      <FileUp size={12} className="mr-1" />
-                      {file.name}
-                    </div>
+                    <FilePreview 
+                      key={index}
+                      file={file}
+                      onRemove={() => handleRemoveFile(file)}
+                    />
                   ))}
                 </div>
               )}
               
-              {result && messages.length > 0 && messages[messages.length - 1].type === 'assistant' && (
-                <div className="mb-4 mt-2">
-                  <div className="mb-2 text-center text-gray-300">
-                    <p>Want to submit this build to Foundry?</p>
-                  </div>
-                  <Button 
-                    onClick={handleSendToBuilder} 
-                    className="w-full gap-2 py-6 bg-violet-600 hover:bg-violet-700 transition-all btn-glow"
-                  >
-                    Send Build Request
-                    <Mail size={16} />
-                  </Button>
-                </div>
+              {result && currentResponseStep === 3 && (
+                <BuildEmailForm onSubmit={handleSendToBuilder} />
               )}
               
-              <form onSubmit={handleSendMessage} className="flex items-center gap-2 border border-gray-700 rounded-lg p-2 bg-gray-800 shadow-inner">
-                <Input 
-                  type="file" 
-                  id="file-upload" 
-                  className="hidden" 
-                  onChange={handleFileChange}
-                  ref={fileInputRef}
-                  multiple
-                />
-                <Button
-                  type="button"
-                  variant="ghost" 
-                  size="icon"
-                  className="text-gray-400 hover:text-violet-400 transition-colors"
-                  onClick={triggerFileUpload}
+              {(!result || currentResponseStep < 3) && (
+                <form 
+                  onSubmit={handleSendMessage}
+                  onDrop={handleFileDrop}
+                  onDragOver={handleDragOver}
+                  className="relative focus-within:ring-2 focus-within:ring-violet-500/50 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 rounded-lg transition-all duration-300"
                 >
-                  <Paperclip size={18} />
-                </Button>
-                
-                <Input 
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Describe your app idea or upload your scope..."
-                  className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base bg-transparent text-white"
-                />
-                
-                <Button 
-                  type="button"
-                  variant="ghost" 
-                  size="icon"
-                  className="text-gray-400 hover:text-violet-400 transition-colors"
-                >
-                  <Mic size={18} />
-                </Button>
-                
-                <Button 
-                  type="submit" 
-                  size="icon"
-                  disabled={isTyping || (!inputValue.trim() && uploadedFiles.length === 0)}
-                  className="rounded-full bg-violet-600 hover:bg-violet-700"
-                >
-                  <Send size={18} />
-                </Button>
-              </form>
+                  <div className="flex items-center gap-2 border border-gray-700 rounded-lg p-2 bg-gray-800 shadow-inner group transition-all duration-300 focus-within:border-violet-500/50">
+                    <Input 
+                      type="file" 
+                      id="file-upload" 
+                      className="hidden" 
+                      onChange={handleFileChange}
+                      ref={fileInputRef}
+                      accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
+                      multiple
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost" 
+                      size="icon"
+                      className="text-gray-400 hover:text-violet-400 transition-colors"
+                      onClick={triggerFileUpload}
+                    >
+                      <Paperclip size={18} />
+                    </Button>
+                    
+                    <Input 
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      placeholder="Describe your app idea or upload your scope..."
+                      className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-base bg-transparent text-white"
+                    />
+                    
+                    <Button 
+                      type="button"
+                      variant="ghost" 
+                      size="icon"
+                      className="text-gray-400 hover:text-violet-400 transition-colors"
+                    >
+                      <Mic size={18} />
+                    </Button>
+                    
+                    <Button 
+                      type="submit" 
+                      size="icon"
+                      disabled={isTyping || (!inputValue.trim() && uploadedFiles.length === 0)}
+                      className="rounded-full bg-violet-600 hover:bg-violet-700"
+                    >
+                      <Send size={18} />
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-2 text-xs text-center text-gray-500">
+                    {!uploadedFiles.length && <p>Drag & drop files or click the paperclip to upload (.pdf, .doc, .png, .jpg, .txt)</p>}
+                  </div>
+                </form>
+              )}
             </div>
           </CardContent>
         </Card>
