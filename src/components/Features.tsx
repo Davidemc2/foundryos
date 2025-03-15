@@ -1,14 +1,16 @@
 
 import AudienceSection from "./features/AudienceSection";
-import ProblemSolutionSection from "./features/ProblemSolutionSection";
-import SolutionSection from "./features/SolutionSection";
+import HowFoundryWorks from "./features/HowFoundryWorks";
+import WhatFoundryDoes from "./features/WhatFoundryDoes";
 import WhyIBuiltSection from "./features/WhyIBuiltSection";
+import SolutionSection from "./features/SolutionSection";
 
 const Features = () => {
   return (
     <>
       <AudienceSection />
-      <ProblemSolutionSection />
+      <HowFoundryWorks />
+      <WhatFoundryDoes />
       <WhyIBuiltSection />
       <SolutionSection />
     </>
