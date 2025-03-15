@@ -1,34 +1,74 @@
 
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { SendHorizontal } from "lucide-react";
 
 const TryFoundrySection = () => {
   const navigate = useNavigate();
+  const [prompt, setPrompt] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleLaunchChat = () => {
-    navigate("/build");
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!prompt.trim()) return;
+    
+    // Show thinking animation
+    setIsThinking(true);
+    
+    // Redirect after a brief delay to simulate thinking
+    setTimeout(() => {
+      // Navigate to build page (optionally could pass the prompt as state)
+      navigate("/build", { state: { initialPrompt: prompt } });
+    }, 1500);
   };
 
   return (
-    <section className="py-12 bg-gray-50 relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,rgba(155,135,245,0.06)_0%,transparent_100%)]" />
+    <section className="py-16 relative overflow-hidden">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(40%_40%_at_50%_50%,rgba(155,135,245,0.12)_0%,transparent_100%)]" />
       
       <div className="container-custom">
-        <div className="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 bg-violet-100 p-3 rounded-full">
-              <MessageSquare size={24} className="text-violet-600" />
-            </div>
-            <p className="text-lg font-medium text-gray-800">Got an idea? Start building it here →</p>
-          </div>
-          <Button 
-            onClick={handleLaunchChat}
-            className="w-full md:w-auto gap-2 bg-violet-600 hover:bg-violet-700 text-white shadow-md hover:shadow-violet-500/20 transition-all"
-          >
-            Launch Chat
-            <MessageSquare size={16} />
-          </Button>
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3">Start Building Instantly</h2>
+          <p className="text-muted-foreground">Tell Foundry what you're working on and watch it build your scope.</p>
+        </div>
+        
+        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-5 border border-gray-100 hover:shadow-xl transition-shadow">
+          <form onSubmit={handleSubmit} className="relative">
+            <Input
+              ref={inputRef}
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="I want to build an AI tool that helps recruiters..."
+              className="pr-12 py-6 text-base bg-transparent focus-visible:ring-violet-400"
+              disabled={isThinking}
+            />
+            
+            <Button 
+              type="submit"
+              size="icon" 
+              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-violet-600 hover:bg-violet-700 transition-all ${isThinking ? 'opacity-70' : ''}`}
+              disabled={isThinking}
+            >
+              {isThinking ? (
+                <div className="flex space-x-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce animation-delay-200"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-white animate-bounce animation-delay-400"></div>
+                </div>
+              ) : (
+                <SendHorizontal size={16} />
+              )}
+            </Button>
+          </form>
+          
+          <p className="text-xs text-gray-500 mt-3 text-center">
+            No login needed. Just tell us what you're building.
+          </p>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,10 +25,17 @@ interface TaskItem {
   description: string;
 }
 
+interface LocationState {
+  initialPrompt?: string;
+}
+
 const BuildPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as LocationState;
+
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(state?.initialPrompt || "");
   const [isTyping, setIsTyping] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [result, setResult] = useState<{
@@ -59,6 +66,13 @@ const BuildPage = () => {
     };
     
     setMessages([welcomeMessage]);
+    
+    // If we have an initial prompt from the teaser, submit it automatically
+    if (state?.initialPrompt) {
+      setTimeout(() => {
+        handleSendMessage(new Event('submit') as any);
+      }, 800);
+    }
   }, []);
 
   const generateUniqueId = () => {
