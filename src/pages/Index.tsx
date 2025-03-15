@@ -4,11 +4,9 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import TryFoundrySection from "@/components/TryFoundrySection";
 import Features from "@/components/Features";
-import HowItWorks from "@/components/HowItWorks";
 import FAQ from "@/components/FAQ";
 import EarlyAccess from "@/components/EarlyAccess";
 import Footer from "@/components/Footer";
-import WhyIBuiltSection from "@/components/features/WhyIBuiltSection";
 
 const Index = () => {
   useEffect(() => {
@@ -22,9 +20,7 @@ const Index = () => {
       <main>
         <Hero />
         <TryFoundrySection />
-        <WhyIBuiltSection />
         <Features />
-        <HowItWorks />
         <FAQ />
         <EarlyAccess />
       </main>
