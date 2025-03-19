@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { ArrowRight, Send } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -15,14 +15,64 @@ const placeholders = [
 const TryFoundrySection = () => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState("");
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
   const navigate = useNavigate();
+  
+  // Effect for the auto-typing animation
+  useEffect(() => {
+    const typingSpeed = 70; // ms per character
+    const deletingSpeed = 30; // ms per character
+    const pauseBetweenPhrases = 1500; // ms to wait after typing
+    
+    let timeout: number;
+    
+    if (!isDeleting && charIndex < placeholders[placeholderIndex].length) {
+      // Still typing the current placeholder
+      timeout = window.setTimeout(() => {
+        setCurrentPlaceholder(placeholders[placeholderIndex].substring(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+      }, typingSpeed);
+    } else if (!isDeleting && charIndex >= placeholders[placeholderIndex].length) {
+      // Finished typing, pause before deleting
+      timeout = window.setTimeout(() => {
+        setIsDeleting(true);
+      }, pauseBetweenPhrases);
+    } else if (isDeleting && charIndex > 0) {
+      // Deleting the current placeholder
+      timeout = window.setTimeout(() => {
+        setCurrentPlaceholder(placeholders[placeholderIndex].substring(0, charIndex - 1));
+        setCharIndex(charIndex - 1);
+      }, deletingSpeed);
+    } else if (isDeleting && charIndex === 0) {
+      // Finished deleting, move to next placeholder
+      setIsDeleting(false);
+      setPlaceholderIndex((placeholderIndex + 1) % placeholders.length);
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [charIndex, isDeleting, placeholderIndex]);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
   };
   
-  const handleExampleClick = (example: string) => {
-    setInputValue(example);
+  const handleFocus = () => {
+    // Optional: pause the animation when the user focuses on the textarea
+    if (textareaRef.current) {
+      textareaRef.current.placeholder = "";
+    }
+  };
+  
+  const handleBlur = () => {
+    // Optional: resume the animation if the field is empty
+    if (textareaRef.current && !inputValue) {
+      textareaRef.current.placeholder = currentPlaceholder;
+    }
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -68,24 +118,14 @@ const TryFoundrySection = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="relative focus-within:ring-2 focus-within:ring-violet-500/50 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 rounded-lg transition-all duration-300">
                     <Textarea 
+                      ref={textareaRef}
                       value={inputValue}
                       onChange={handleInputChange}
-                      placeholder="Describe what you want to build..."
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      placeholder={currentPlaceholder}
                       className="min-h-[120px] bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-violet-500 resize-none"
                     />
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {placeholders.map((placeholder, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => handleExampleClick(placeholder)}
-                        className="px-3 py-1 bg-violet-900/30 rounded-full text-sm text-violet-300 hover:bg-violet-900/50 transition-colors"
-                      >
-                        {placeholder}
-                      </button>
-                    ))}
                   </div>
                   
                   <Button 
