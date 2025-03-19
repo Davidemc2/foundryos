@@ -1,6 +1,9 @@
 
-import { ArrowRight } from "lucide-react";
-import EmailCapture from "./EmailCapture";
+import { useState } from "react";
+import { ArrowRight, Send } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 const placeholders = [
   "I want to build an app that helps creators...",
@@ -10,6 +13,31 @@ const placeholders = [
 ];
 
 const TryFoundrySection = () => {
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value);
+  };
+  
+  const handleExampleClick = (example: string) => {
+    setInputValue(example);
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!inputValue.trim()) return;
+    
+    setIsLoading(true);
+    
+    // Navigate to the build page with the prompt
+    setTimeout(() => {
+      navigate("/build", { state: { initialPrompt: inputValue } });
+    }, 500); // Small delay to show loading state
+  };
+  
   return (
     <section className="py-20 relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 to-gray-950" />
@@ -21,44 +49,62 @@ const TryFoundrySection = () => {
       
       <div className="container-custom">
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4">Have an idea? Foundry is launching soon.</h2>
-          <p className="text-muted-foreground">We're refining our AI builder. Get early access to be the first to use it.</p>
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">Start building with Foundry AI</h2>
+          <p className="text-muted-foreground">Describe your app idea, and we'll help you build it.</p>
         </div>
         
         <div className="max-w-2xl mx-auto transform hover:scale-[1.01] transition-all duration-300">
           <div className="relative group">
-            {/* Glow Effect Border - only on focus */}
+            {/* Glow Effect Border */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-violet-400 rounded-xl blur-sm opacity-0 group-hover:opacity-50 transition-opacity duration-1000"></div>
             
-            <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-xl shadow-xl p-5 border border-gray-800">
-              <div className="space-y-6 text-center p-4">
+            <div className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-xl shadow-xl p-6 border border-gray-800">
+              <div className="space-y-6">
                 <div className="flex items-center justify-center space-x-2 mb-4">
                   <span className="text-3xl">⚒️</span>
                   <span className="text-xl text-white font-bold">Foundry AI</span>
                 </div>
                 
-                <div className="relative">
-                  <div className="p-6 bg-gray-800/50 border-gray-700 rounded-lg text-gray-300">
-                    <p className="mb-2 text-violet-400 font-medium">Coming Soon</p>
-                    <p className="text-lg mb-4">Our AI builder is currently in private beta testing.</p>
-                    <div className="flex flex-wrap gap-2 justify-center mb-4">
-                      {placeholders.map((placeholder, i) => (
-                        <span key={i} className="px-3 py-1 bg-violet-900/30 rounded-full text-sm text-violet-300">
-                          {placeholder.substring(0, 25)}...
-                        </span>
-                      ))}
-                    </div>
-                    <p className="text-sm text-gray-400">Join our early access list to be the first to build your app with AI</p>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="relative focus-within:ring-2 focus-within:ring-violet-500/50 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 rounded-lg transition-all duration-300">
+                    <Textarea 
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      placeholder="Describe what you want to build..."
+                      className="min-h-[120px] bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-violet-500 resize-none"
+                    />
                   </div>
-                </div>
-                
-                <div className="mt-6">
-                  <EmailCapture 
-                    className="max-w-md mx-auto" 
-                    buttonText="Join Waitlist" 
-                    placeholder="Your email address"
-                  />
-                </div>
+                  
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {placeholders.map((placeholder, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleExampleClick(placeholder)}
+                        className="px-3 py-1 bg-violet-900/30 rounded-full text-sm text-violet-300 hover:bg-violet-900/50 transition-colors"
+                      >
+                        {placeholder}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-violet-700 hover:bg-violet-600 hover:scale-105 hover:shadow-[0_0_20px_rgba(139,92,246,0.7)] h-12 px-6 btn-glow transition-all duration-300"
+                    disabled={isLoading || !inputValue.trim()}
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Processing...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        Start Building <Send size={16} className="animate-bounce-subtle" />
+                      </div>
+                    )}
+                  </Button>
+                </form>
               </div>
             </div>
           </div>
