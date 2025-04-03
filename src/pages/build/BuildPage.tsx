@@ -35,6 +35,7 @@ const BuildPage = () => {
     hasInteracted,
     showThankYou,
     submittedEmail,
+    isApiKeyError,
     handleSendMessage,
     handleRemoveFile,
     handleFileChange,
@@ -125,7 +126,8 @@ const BuildPage = () => {
               {connectionError && (
                 <ConnectionErrorAlert 
                   errorMessage={connectionError} 
-                  onRetry={handleRetry} 
+                  onRetry={handleRetry}
+                  isApiKeyError={isApiKeyError}
                 />
               )}
               

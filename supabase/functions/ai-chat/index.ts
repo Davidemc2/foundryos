@@ -61,10 +61,22 @@ serve(async (req) => {
     if (!openAIApiKey || openAIApiKey.trim() === "") {
       console.error("OpenAI API key is not configured or empty");
       return new Response(JSON.stringify({
-        error: "OpenAI API key is not configured. Please ask the administrator to add it to the Supabase secrets.",
+        error: "OpenAI API key is not configured. Please add a valid API key in Supabase Edge Function secrets.",
         errorType: "configuration",
       }), {
         status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Check if API key is valid (not the placeholder or default API key)
+    if (openAIApiKey.includes("sk-proj-")) {
+      console.error("OpenAI API key appears to be a placeholder or invalid key");
+      return new Response(JSON.stringify({
+        error: "The OpenAI API key appears to be invalid or a placeholder. Please replace it with a valid API key.",
+        errorType: "authentication",
+      }), {
+        status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { ChatStage, Message, ProjectResult, MessageType } from "../constants";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,100 +58,6 @@ export function useBuilderChat(initialPrompt: string) {
     };
     setMessages(prev => [...prev, newMessage]);
     return newMessage.id;
-  };
-
-  const callAIFunction = async (formattedMessages: any[], retryCount = 0) => {
-    try {
-      console.log("Calling AI function, attempt:", retryCount + 1);
-      setConnectionError(null);
-      
-      // Add a slight delay on retries to prevent overwhelming the API
-      if (retryCount > 0) {
-        await new Promise(resolve => setTimeout(resolve, retryCount * 1500));
-      }
-      
-      // Add debugging information to help troubleshoot API issues
-      console.log(`Calling edge function with ${formattedMessages.length} messages and stage: ${currentStage}`);
-      
-      const response = await supabase.functions.invoke('ai-chat', {
-        body: {
-          messages: formattedMessages,
-          stage: currentStage,
-          uploadedFiles: uploadedFiles.map(file => file.name)
-        }
-      });
-
-      console.log("Edge function response:", response);
-
-      if (response.error) {
-        console.error("AI response error:", response.error);
-        throw new Error(`Failed to get AI response: ${response.error}`);
-      }
-
-      // Check if the response data contains an error field
-      if (response.data && response.data.error) {
-        console.error("AI function error:", response.data.error, response.data.details);
-        
-        // Handle different error types with appropriate messages
-        const errorType = response.data.errorType || "unknown";
-        
-        switch(errorType) {
-          case "authentication":
-            throw new Error("The AI service is experiencing authentication issues. Please contact the administrator.");
-          case "configuration":
-            throw new Error("The AI service is not properly configured. Please contact the administrator.");
-          case "rate_limit":
-            throw new Error("The AI service is currently experiencing high traffic. Please try again in a moment.");
-          case "timeout":
-            throw new Error("The request took too long to process. Please try with a simpler query.");
-          default:
-            throw new Error(response.data.error);
-        }
-      }
-
-      // Log usage statistics if available
-      if (response.data && response.data.usage) {
-        console.log("Token usage:", response.data.usage);
-      }
-
-      return response.data.response;
-    } catch (error) {
-      console.error("Error in callAIFunction:", error);
-      
-      // Retry logic - only retry for specific errors and up to max retries
-      const maxRetries = 3;
-      const shouldRetry = 
-        error.message?.includes("rate limit") || 
-        error.message?.includes("timeout") || 
-        error.message?.includes("network") ||
-        error.message?.includes("500") || 
-        error.message?.includes("503") ||
-        error.message?.includes("429") ||
-        error.message?.includes("high traffic");
-        
-      if (retryCount < maxRetries && shouldRetry) {
-        console.log(`Retrying AI function call, attempt ${retryCount + 2}`);
-        setRetryCount(prev => prev + 1);
-        return callAIFunction(formattedMessages, retryCount + 1);
-      }
-      
-      // Set appropriate error message based on error type
-      if (retryCount >= maxRetries) {
-        setConnectionError("Failed to connect after multiple attempts. The service might be temporarily unavailable. Please try again later.");
-      } else if (error.message?.includes("authentication") || error.message?.includes("API key")) {
-        setConnectionError("Authentication error with AI service. Please contact the administrator.");
-      } else if (error.message?.includes("configuration")) {
-        setConnectionError("The AI service is not properly configured. Please contact the administrator.");
-      } else if (error.message?.includes("rate limit") || error.message?.includes("high traffic") || error.message?.includes("429")) {
-        setConnectionError("The AI service is currently experiencing high traffic. Please try again in a moment.");
-      } else if (error.message?.includes("timeout")) {
-        setConnectionError("The request timed out. Please try with a simpler query.");
-      } else {
-        setConnectionError(`Connection error: ${error.message}`);
-      }
-      
-      throw error;
-    }
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -225,7 +130,13 @@ export function useBuilderChat(initialPrompt: string) {
       }
     } catch (error) {
       console.error("Error processing message:", error);
-      
+    
+      // Check for specific API key error
+      const isApiKeyError = error.message?.includes("API key") || 
+                          error.message?.includes("authentication") || 
+                          error.message?.includes("invalid_api_key") ||
+                          error.message?.includes("401");
+    
       // Show a user-friendly error message based on the error type
       if (error.message?.includes("quota exceeded") || error.message?.includes("insufficient_quota") || error.message?.includes("rate limit")) {
         toast({
@@ -235,14 +146,14 @@ export function useBuilderChat(initialPrompt: string) {
         });
         
         addAssistantMessage("I'm sorry, but it looks like the AI service is currently experiencing high demand. Please try again in a moment.");
-      } else if (error.message?.includes("Invalid") && error.message?.includes("API key")) {
+      } else if (isApiKeyError) {
         toast({
           title: "Authentication Error",
-          description: "There was an issue connecting to the AI service.",
+          description: "Invalid or missing OpenAI API key configuration.",
           variant: "destructive"
         });
         
-        addAssistantMessage("I'm sorry, but the AI service is experiencing authentication issues. Please try again or contact support if the problem persists.");
+        setConnectionError("Authentication error: Invalid or missing OpenAI API key. Please contact the administrator to check the API key configuration.");
       } else if (error.message?.includes("timeout")) {
         toast({
           title: "Connection Timeout",
@@ -537,6 +448,115 @@ export function useBuilderChat(initialPrompt: string) {
     e.stopPropagation();
   };
 
+  // Update callAIFunction to handle API key errors better
+  const callAIFunction = async (formattedMessages: any[], retryCount = 0) => {
+    try {
+      console.log("Calling AI function, attempt:", retryCount + 1);
+      setConnectionError(null);
+    
+      // Add a slight delay on retries to prevent overwhelming the API
+      if (retryCount > 0) {
+        await new Promise(resolve => setTimeout(resolve, retryCount * 1500));
+      }
+    
+      // Add debugging information to help troubleshoot API issues
+      console.log(`Calling edge function with ${formattedMessages.length} messages and stage: ${currentStage}`);
+    
+      const response = await supabase.functions.invoke('ai-chat', {
+        body: {
+          messages: formattedMessages,
+          stage: currentStage,
+          uploadedFiles: uploadedFiles.map(file => file.name)
+        }
+      });
+
+      console.log("Edge function response:", response);
+
+      if (response.error) {
+        console.error("AI response error:", response.error);
+        throw new Error(`Failed to get AI response: ${response.error}`);
+      }
+
+      // Check if the response data contains an error field
+      if (response.data && response.data.error) {
+        console.error("AI function error:", response.data.error, response.data.details);
+      
+        // Handle different error types with appropriate messages
+        const errorType = response.data.errorType || "unknown";
+        const isApiKeyError = errorType === "authentication" || 
+                            (response.data.details && response.data.details.error && 
+                             response.data.details.error.code === "invalid_api_key");
+      
+        switch(errorType) {
+          case "authentication":
+            throw new Error("Authentication error: Invalid or missing OpenAI API key. Please contact the administrator.");
+          case "configuration":
+            throw new Error("The AI service is not properly configured. Please contact the administrator.");
+          case "rate_limit":
+            throw new Error("The AI service is currently experiencing high traffic. Please try again in a moment.");
+          case "timeout":
+            throw new Error("The request took too long to process. Please try with a simpler query.");
+          default:
+            throw new Error(response.data.error);
+        }
+      }
+
+      // Log usage statistics if available
+      if (response.data && response.data.usage) {
+        console.log("Token usage:", response.data.usage);
+      }
+
+      return response.data.response;
+    } catch (error) {
+      console.error("Error in callAIFunction:", error);
+    
+      // Check if this is an API key error
+      const isApiKeyError = error.message?.includes("API key") || 
+                          error.message?.includes("authentication") || 
+                          error.message?.includes("401");
+    
+      // For API key errors, no need to retry
+      if (isApiKeyError) {
+        setConnectionError(error.message);
+        throw error;
+      }
+    
+      // Retry logic - only retry for specific errors and up to max retries
+      const maxRetries = 3;
+      const shouldRetry = 
+        error.message?.includes("rate limit") || 
+        error.message?.includes("timeout") || 
+        error.message?.includes("network") ||
+        error.message?.includes("500") || 
+        error.message?.includes("503") ||
+        error.message?.includes("429") ||
+        error.message?.includes("high traffic");
+      
+      if (retryCount < maxRetries && shouldRetry) {
+        console.log(`Retrying AI function call, attempt ${retryCount + 2}`);
+        setRetryCount(prev => prev + 1);
+        return callAIFunction(formattedMessages, retryCount + 1);
+      }
+    
+      // Set appropriate error message based on error type
+      if (retryCount >= maxRetries) {
+        setConnectionError("Failed to connect after multiple attempts. The service might be temporarily unavailable. Please try again later.");
+      } else if (isApiKeyError) {
+        setConnectionError("Authentication error: Invalid or missing OpenAI API key. Please contact the administrator.");
+      } else if (error.message?.includes("configuration")) {
+        setConnectionError("The AI service is not properly configured. Please contact the administrator.");
+      } else if (error.message?.includes("rate limit") || error.message?.includes("high traffic") || error.message?.includes("429")) {
+        setConnectionError("The AI service is currently experiencing high traffic. Please try again in a moment.");
+      } else if (error.message?.includes("timeout")) {
+        setConnectionError("The request timed out. Please try with a simpler query.");
+      } else {
+        setConnectionError(`Connection error: ${error.message}`);
+      }
+    
+      throw error;
+    }
+  };
+
   return {
     messages,
     inputValue,
@@ -550,6 +570,8 @@ export function useBuilderChat(initialPrompt: string) {
     connectionError,
     result,
     submittedEmail,
+    // Add isApiKeyError to the return values
+    isApiKeyError: connectionError?.includes("API key") || connectionError?.includes("authentication") || connectionError?.includes("401"),
     handleSendMessage,
     handleRemoveFile,
     handleFileChange,
