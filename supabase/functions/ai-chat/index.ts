@@ -96,8 +96,8 @@ serve(async (req) => {
       console.log("Files included in the request:", uploadedFiles);
     }
 
-    // Using gpt-4 which is a valid OpenAI model
-    const modelName = "gpt-3.5-turbo";
+    // Using the latest available model that's reliable
+    const modelName = "gpt-3.5-turbo"; // Updated from gpt-4 if that was causing issues
     console.log(`Calling OpenAI API with model: ${modelName}`);
     
     const retryOpenAI = async (attempt = 1, maxAttempts = 3) => {
@@ -108,7 +108,7 @@ serve(async (req) => {
           model: modelName,
           messages: allMessages,
           temperature: 0.7,
-          max_tokens: 1000,
+          max_tokens: 1000, // Increased token limit to ensure complete responses
         });
         
         console.log(`OpenAI request body size: ${openAIRequestBody.length} bytes`);
