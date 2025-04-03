@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import EarlyAccessConfirmation from "./pages/EarlyAccessConfirmation";
 import NotFound from "./pages/NotFound";
-import BuildPage from "./pages/BuildPage";
+import BuildPage from "./pages/build";
 
 const queryClient = new QueryClient();
 
