@@ -9,21 +9,108 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      waitlist: {
+      builds: {
         Row: {
           created_at: string
           email: string
+          estimated_hours: number | null
           id: string
+          messages: Json | null
+          project_name: string
+          project_scope: string | null
+          status: string
+          updated_at: string
         }
         Insert: {
           created_at?: string
           email: string
+          estimated_hours?: number | null
           id?: string
+          messages?: Json | null
+          project_name: string
+          project_scope?: string | null
+          status?: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
           email?: string
+          estimated_hours?: number | null
           id?: string
+          messages?: Json | null
+          project_name?: string
+          project_scope?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          referral_code: string
+          referrer_email: string
+          status: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          referral_code: string
+          referrer_email: string
+          status?: string
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          referral_code?: string
+          referrer_email?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      waitlist: {
+        Row: {
+          accept_marketing: boolean | null
+          build_requests: Json | null
+          created_at: string
+          email: string
+          id: string
+          interest_area: string | null
+          name: string | null
+          referrer: string | null
+          source: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          accept_marketing?: boolean | null
+          build_requests?: Json | null
+          created_at?: string
+          email: string
+          id?: string
+          interest_area?: string | null
+          name?: string | null
+          referrer?: string | null
+          source?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          accept_marketing?: boolean | null
+          build_requests?: Json | null
+          created_at?: string
+          email?: string
+          id?: string
+          interest_area?: string | null
+          name?: string | null
+          referrer?: string | null
+          source?: string | null
+          utm_source?: string | null
         }
         Relationships: []
       }

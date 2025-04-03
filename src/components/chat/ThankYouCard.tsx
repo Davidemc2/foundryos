@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -11,7 +11,8 @@ import {
   Share2, 
   Copy, 
   CheckCheck,
-  Send
+  Send,
+  Users
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -20,19 +21,47 @@ import { supabase } from "@/integrations/supabase/client";
 interface ThankYouCardProps {
   onBackToHome: () => void;
   email?: string;
+  waitlistPosition?: number | null;
+  referralCode?: string;
 }
 
-export const ThankYouCard: React.FC<ThankYouCardProps> = ({ onBackToHome, email }) => {
+export const ThankYouCard: React.FC<ThankYouCardProps> = ({ 
+  onBackToHome, 
+  email,
+  waitlistPosition = null,
+  referralCode = ""
+}) => {
   const [referralEmail, setReferralEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [totalSignups, setTotalSignups] = useState<number | null>(null);
   const { toast } = useToast();
   
-  // Generate a unique referral code based on time if not available
-  const referralCode = "FOUNDRY" + Math.floor(Math.random() * 10000);
+  // Generate a unique referral code based on time if not provided
+  const actualReferralCode = referralCode || "FOUNDRY" + Math.floor(Math.random() * 10000);
+  
+  useEffect(() => {
+    // Get the approximate total count of signups 
+    const fetchTotalSignups = async () => {
+      try {
+        const { count } = await supabase
+          .from('waitlist')
+          .select('*', { count: 'exact', head: true });
+        
+        // Add a slight buffer to make the number feel more dynamic
+        setTotalSignups(count ? Math.floor(count * 1.15) : 100);
+      } catch (error) {
+        console.error("Error fetching total signups:", error);
+        // Default fallback value
+        setTotalSignups(100);
+      }
+    };
+    
+    fetchTotalSignups();
+  }, []);
   
   const handleCopyLink = () => {
-    const shareUrl = `${window.location.origin}?ref=${referralCode}`;
+    const shareUrl = `${window.location.origin}?ref=${actualReferralCode}`;
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     
@@ -63,7 +92,7 @@ export const ThankYouCard: React.FC<ThankYouCardProps> = ({ onBackToHome, email 
         .insert([{ 
           email: referralEmail, 
           referrer_email: email || "anonymous",
-          referral_code: referralCode,
+          referral_code: actualReferralCode,
           status: 'sent'
         }]);
       
@@ -94,16 +123,21 @@ export const ThankYouCard: React.FC<ThankYouCardProps> = ({ onBackToHome, email 
   
   const handleShareOnTwitter = () => {
     const text = encodeURIComponent("I just joined the Foundry OS early access list! Can't wait to start building. #FoundryOS");
-    const url = encodeURIComponent(`${window.location.origin}?ref=${referralCode}`);
+    const url = encodeURIComponent(`${window.location.origin}?ref=${actualReferralCode}`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
   };
   
   const handleShareOnLinkedIn = () => {
-    const url = encodeURIComponent(`${window.location.origin}?ref=${referralCode}`);
+    const url = encodeURIComponent(`${window.location.origin}?ref=${actualReferralCode}`);
     const title = encodeURIComponent("Join Foundry OS Early Access");
     const summary = encodeURIComponent("I just signed up for early access to Foundry OS - the platform for building powerful AI applications. Join me!");
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, "_blank");
   };
+
+  // Calculate queue position percentage and spots filled
+  const queuePosition = waitlistPosition || Math.floor(Math.random() * 30) + 10;
+  const spotsFilled = totalSignups ? Math.min(Math.round((totalSignups / 200) * 100), 95) : 30;
+  const queuePositionPercent = Math.min(100, Math.max(5, Math.round((queuePosition / 200) * 100)));
 
   return (
     <Card className="max-w-2xl w-full shadow-xl border-violet-500/20 bg-gradient-to-b from-gray-900 to-gray-950 text-white overflow-hidden">
@@ -118,13 +152,27 @@ export const ThankYouCard: React.FC<ThankYouCardProps> = ({ onBackToHome, email 
           <p className="text-gray-300 text-lg mb-6 max-w-lg mx-auto">You're on the list for early access to Foundry OS. We'll notify you as soon as your spot is ready.</p>
           
           <div className="w-full bg-gray-800/80 h-3 rounded-full mb-6 overflow-hidden p-0.5">
-            <div className="bg-gradient-to-r from-violet-500 to-purple-600 h-full w-[30%] rounded-full animate-pulse-slow"></div>
+            <div 
+              className="bg-gradient-to-r from-violet-500 to-purple-600 h-full rounded-full animate-pulse-slow"
+              style={{ width: `${spotsFilled}%` }}
+            ></div>
           </div>
           
           <div className="flex items-center justify-center gap-2 text-sm md:text-base text-violet-300 mb-8">
             <span className="inline-block w-2.5 h-2.5 bg-violet-500 rounded-full"></span>
-            <span>30% of spots filled</span>
+            <span>{spotsFilled}% of spots filled</span>
           </div>
+          
+          {waitlistPosition && (
+            <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-4 mb-6 border border-violet-500/20">
+              <div className="flex items-center gap-3 text-base md:text-lg">
+                <Users className="text-violet-400" />
+                <span className="text-violet-200">Your position: </span>
+                <span className="font-mono text-lg md:text-xl font-bold text-white">{waitlistPosition}</span>
+                <span className="text-gray-400 text-sm">of ~200</span>
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="bg-gradient-to-br from-gray-800/70 to-gray-900/70 rounded-lg p-6 mb-8 border border-gray-700/50 shadow-inner">
@@ -179,7 +227,7 @@ export const ThankYouCard: React.FC<ThankYouCardProps> = ({ onBackToHome, email 
             </Button>
           </div>
           
-          <p className="text-xs text-gray-400">Your unique referral code: <span className="font-mono text-violet-300">{referralCode}</span></p>
+          <p className="text-xs text-gray-400">Your unique referral code: <span className="font-mono text-violet-300">{actualReferralCode}</span></p>
         </div>
         
         <div className="mb-8">

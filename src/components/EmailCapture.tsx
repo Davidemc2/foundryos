@@ -1,9 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Rocket } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,6 +34,22 @@ const EmailCapture = ({
   const [stage, setStage] = useState<"email" | "details">(collectMoreInfo ? "email" : "email");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const referrer = searchParams.get("ref");
+  
+  useEffect(() => {
+    // Track page view with referrer information
+    try {
+      if (typeof window !== 'undefined' && (window as any).gtag && referrer) {
+        (window as any).gtag('event', 'referral_visit', {
+          'event_category': 'acquisition',
+          'event_label': referrer
+        });
+      }
+    } catch (error) {
+      console.error("Error tracking referral visit:", error);
+    }
+  }, [referrer]);
   
   const validateEmail = (email: string) => {
     return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
@@ -59,6 +75,10 @@ const EmailCapture = ({
     setIsSubmitting(true);
     
     try {
+      // Get UTM parameters and referrer from URL
+      const utmSource = searchParams.get("utm_source");
+      const documentReferrer = document.referrer || "direct";
+      
       // Additional user data to store
       const userData = {
         email,
@@ -66,8 +86,8 @@ const EmailCapture = ({
         ...(interest ? { interest_area: interest } : {}),
         accept_marketing: acceptUpdates,
         source: window.location.pathname,
-        referrer: document.referrer || "direct",
-        utm_source: new URLSearchParams(window.location.search).get("utm_source") || null
+        referrer: referrer || null,
+        utm_source: utmSource || null
       };
       
       // Store email and additional data in Supabase
@@ -96,12 +116,38 @@ const EmailCapture = ({
 
       console.log("Email submitted to waitlist:", email);
       
+      // If there's a referral code, update the referral status
+      if (referrer) {
+        try {
+          const { data: referralData } = await supabase
+            .from('referrals')
+            .select('*')
+            .eq('referral_code', referrer)
+            .eq('email', email)
+            .maybeSingle();
+            
+          if (referralData) {
+            // Update the referral status to claimed
+            await supabase
+              .from('referrals')
+              .update({ 
+                status: 'claimed',
+                claimed_at: new Date().toISOString()
+              })
+              .eq('id', referralData.id);
+          }
+        } catch (referralError) {
+          console.error("Error updating referral:", referralError);
+        }
+      }
+      
       // Track conversion event
       try {
         if (typeof window !== 'undefined' && (window as any).gtag) {
           (window as any).gtag('event', 'waitlist_signup', {
             'event_category': 'engagement',
-            'event_label': interest || 'not specified'
+            'event_label': interest || 'not specified',
+            'referrer': referrer || 'direct'
           });
         }
       } catch (trackingError) {
@@ -112,7 +158,12 @@ const EmailCapture = ({
       setName("");
       
       // Navigate to thank you page
-      navigate("/early-access");
+      navigate("/early-access", { 
+        state: { 
+          email,
+          referrer
+        }
+      });
     } catch (error) {
       console.error("Error in submission:", error);
       toast({
