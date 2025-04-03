@@ -4,7 +4,6 @@ import TryFoundrySection from "@/components/try-foundry";
 import EarlyAccess from "@/components/EarlyAccess";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
-import PricingSection from "@/components/PricingSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -13,7 +12,6 @@ const Index = () => {
       <Hero />
       <Features />
       <TryFoundrySection />
-      <PricingSection />
       <EarlyAccess />
       <Footer />
     </>
