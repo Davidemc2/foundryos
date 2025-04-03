@@ -19,7 +19,7 @@ const getSystemMessage = (stage: string) => {
     case 'scope':
       return "You are Foundry OS, defining project scope based on collected requirements. Present a clear overview of what will be built, focus on core functionality, and ask if the scope aligns with the user's vision. Be specific and business-like.";
     case 'tasks':
-      return "You are Foundry OS, breaking down the project into specific development tasks. For each task, provide a title, short description, and estimated hours. These tasks should cover the entire scope discussed. Calculate total estimated hours at the end. Be specific and thorough.";
+      return "You are Foundry OS, breaking down the project into specific development tasks. For each task, provide a title, short description, and estimated hours. These tasks should cover the entire scope discussed. Format each task as '## Task Title (X hours)' followed by a description. Calculate total estimated hours at the end. Be specific and thorough.";
     case 'estimate':
       return "You are Foundry OS, presenting cost estimates based on task breakdown. Offer standard and fast-track build options with different price points and timelines. Ask the user which option they prefer. Be professional and helpful.";
     case 'payment':
@@ -27,6 +27,25 @@ const getSystemMessage = (stage: string) => {
     default:
       return "You are Foundry OS, an AI assistant specialized in helping users build software applications. Be professional, helpful, and expert in software development.";
   }
+};
+
+// Validate OpenAI model availability
+const validateModel = (model: string): string => {
+  // List of known working models
+  const availableModels = [
+    "gpt-3.5-turbo",
+    "gpt-3.5-turbo-16k",
+    "gpt-4o-mini",
+    "gpt-4o"
+  ];
+  
+  // Default to gpt-3.5-turbo if model not in list or not provided
+  if (!model || !availableModels.includes(model)) {
+    console.log(`Model ${model} not in validated list. Using gpt-3.5-turbo instead.`);
+    return "gpt-3.5-turbo";
+  }
+  
+  return model;
 };
 
 serve(async (req) => {
@@ -82,7 +101,9 @@ serve(async (req) => {
     }
 
     console.log(`Processing request for stage: ${stage || 'initial'} with ${messages.length} messages`);
-    console.log(`Message sample: ${JSON.stringify(messages[messages.length - 1] || {}).substring(0, 200)}...`);
+    if (messages.length > 0) {
+      console.log(`Last message role: ${messages[messages.length - 1].role}, length: ${messages[messages.length - 1].content.length} chars`);
+    }
     
     // Add system message based on the current stage
     const systemMessage = getSystemMessage(stage || 'initial');
@@ -96,8 +117,8 @@ serve(async (req) => {
       console.log("Files included in the request:", uploadedFiles);
     }
 
-    // Using the latest available model that's reliable
-    const modelName = "gpt-3.5-turbo"; // Updated from gpt-4 if that was causing issues
+    // Use a validated model that's reliable
+    const modelName = validateModel("gpt-3.5-turbo");
     console.log(`Calling OpenAI API with model: ${modelName}`);
     
     const retryOpenAI = async (attempt = 1, maxAttempts = 3) => {
@@ -108,7 +129,7 @@ serve(async (req) => {
           model: modelName,
           messages: allMessages,
           temperature: 0.7,
-          max_tokens: 1000, // Increased token limit to ensure complete responses
+          max_tokens: 1500, // Increased token limit to ensure complete responses
         });
         
         console.log(`OpenAI request body size: ${openAIRequestBody.length} bytes`);
@@ -186,6 +207,11 @@ serve(async (req) => {
         const data = await response.json();
         console.log("OpenAI API response received successfully");
         
+        // Log usage stats
+        if (data.usage) {
+          console.log(`Tokens: ${data.usage.prompt_tokens} prompt, ${data.usage.completion_tokens} completion, ${data.usage.total_tokens} total`);
+        }
+        
         return data;
       } catch (error) {
         if (error.name === "AbortError") {
@@ -243,7 +269,7 @@ serve(async (req) => {
       });
     }
     
-    // Return successful response
+    // Return successful response with usage info
     return new Response(JSON.stringify({
       response: result.choices[0].message.content,
       usage: result.usage,

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Send, Mic, Paperclip, FileUp } from "lucide-react";
+import { ArrowLeft, Send, Mic, Paperclip, FileUp, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { ChatMessage } from "@/components/chat/ChatMessage";
 import { FilePreview } from "@/components/chat/FilePreview";
@@ -144,6 +144,9 @@ const BuildPage = () => {
         await new Promise(resolve => setTimeout(resolve, retryCount * 1500));
       }
       
+      // Add debugging information to help troubleshoot API issues
+      console.log(`Calling edge function with ${formattedMessages.length} messages and stage: ${currentStage}`);
+      
       const response = await supabase.functions.invoke('ai-chat', {
         body: {
           messages: formattedMessages,
@@ -165,6 +168,11 @@ const BuildPage = () => {
         throw new Error(response.data.error);
       }
 
+      // Log usage statistics if available
+      if (response.data && response.data.usage) {
+        console.log("Token usage:", response.data.usage);
+      }
+
       return response.data.response;
     } catch (error) {
       console.error("Error in callAIFunction:", error);
@@ -175,7 +183,7 @@ const BuildPage = () => {
         error.message?.includes("rate limit") || 
         error.message?.includes("timeout") || 
         error.message?.includes("network") ||
-        error.message?.includes("500") ||
+        error.message?.includes("500") || 
         error.message?.includes("503") ||
         error.message?.includes("429");
         
@@ -224,6 +232,12 @@ const BuildPage = () => {
     setConnectionError(null);
     
     try {
+      // Show a loading toast to indicate processing
+      const loadingToastId = toast({
+        title: "Processing your request",
+        description: "Our AI is analyzing your input...",
+      });
+      
       const formattedMessages = [
         ...formatMessagesForAPI(),
         { role: 'user', content: userMessage.content }
@@ -231,6 +245,14 @@ const BuildPage = () => {
 
       // Get response from AI using our new function with retry logic
       const aiContent = await callAIFunction(formattedMessages);
+      
+      // Dismiss the loading toast
+      toast({
+        id: loadingToastId,
+        title: "Response ready",
+        description: "Check out the AI's response below",
+        variant: "default"
+      });
       
       // Add the AI response
       addAssistantMessage(aiContent);
@@ -506,12 +528,14 @@ const BuildPage = () => {
               
               {connectionError && (
                 <Alert className="mb-4 border-red-600 bg-red-900/20 text-red-50">
+                  <AlertCircle className="h-4 w-4 mr-2" />
                   <AlertDescription className="flex items-center justify-between">
                     <div>
                       <strong>Connection Error</strong>
                       <p>{connectionError}</p>
                     </div>
                     <Button variant="destructive" onClick={handleRetry} className="ml-2 bg-red-700 hover:bg-red-800">
+                      <RefreshCw size={14} className="mr-2" />
                       Try Again
                     </Button>
                   </AlertDescription>
