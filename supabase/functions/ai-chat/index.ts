@@ -57,11 +57,12 @@ serve(async (req) => {
   try {
     console.log("Edge function invoked - starting execution");
     
-    // Validate OpenAI API key
-    if (!openAIApiKey) {
-      console.error("OpenAI API key is not configured");
+    // Validate OpenAI API key - improved error message
+    if (!openAIApiKey || openAIApiKey.trim() === "") {
+      console.error("OpenAI API key is not configured or empty");
       return new Response(JSON.stringify({
-        error: "OpenAI API key is not configured. Please add it to the Supabase secrets."
+        error: "OpenAI API key is not configured. Please ask the administrator to add it to the Supabase secrets.",
+        errorType: "configuration",
       }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -80,7 +81,8 @@ serve(async (req) => {
     } catch (parseError) {
       console.error("Failed to parse request body:", parseError);
       return new Response(JSON.stringify({
-        error: "Invalid request format. Expected JSON body."
+        error: "Invalid request format. Expected JSON body.",
+        errorType: "client",
       }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -93,7 +95,8 @@ serve(async (req) => {
     if (!messages || !Array.isArray(messages)) {
       console.error("Missing or invalid messages array");
       return new Response(JSON.stringify({
-        error: "Missing or invalid messages array in request body"
+        error: "Missing or invalid messages array in request body",
+        errorType: "client",
       }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -129,7 +132,7 @@ serve(async (req) => {
           model: modelName,
           messages: allMessages,
           temperature: 0.7,
-          max_tokens: 1500, // Increased token limit to ensure complete responses
+          max_tokens: 1500,
         });
         
         console.log(`OpenAI request body size: ${openAIRequestBody.length} bytes`);
@@ -175,11 +178,12 @@ serve(async (req) => {
             }
           }
           
-          // Return specific error message based on status code
+          // Return specific error message based on status code with error type
           if (response.status === 429) {
             return new Response(JSON.stringify({
               error: "OpenAI API rate limit exceeded. Please try again later.",
-              details: errorData
+              details: errorData,
+              errorType: "rate_limit"
             }), {
               status: 429,
               headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -187,7 +191,8 @@ serve(async (req) => {
           } else if (response.status === 401) {
             return new Response(JSON.stringify({
               error: "Invalid API key or authentication error.",
-              details: errorData
+              details: errorData,
+              errorType: "authentication"
             }), {
               status: 401,
               headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -195,7 +200,8 @@ serve(async (req) => {
           } else {
             return new Response(JSON.stringify({
               error: `OpenAI API error: ${errorData.error?.message || "Unknown error"}`,
-              details: errorData
+              details: errorData,
+              errorType: "openai_api"
             }), {
               status: response.status,
               headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -225,6 +231,7 @@ serve(async (req) => {
           
           return new Response(JSON.stringify({
             error: "OpenAI API request timed out after multiple attempts",
+            errorType: "timeout"
           }), {
             status: 408,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -242,6 +249,7 @@ serve(async (req) => {
         
         return new Response(JSON.stringify({
           error: `Error calling OpenAI API: ${error.message}`,
+          errorType: "network"
         }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -262,7 +270,8 @@ serve(async (req) => {
       console.error("Unexpected OpenAI API response format:", result);
       return new Response(JSON.stringify({
         error: "Unexpected response format from OpenAI API",
-        details: result
+        details: result,
+        errorType: "invalid_response"
       }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -282,7 +291,8 @@ serve(async (req) => {
     
     return new Response(JSON.stringify({
       error: error.message || "An error occurred during the request",
-      stack: error.stack || "No stack trace available"
+      stack: error.stack || "No stack trace available",
+      errorType: "server"
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

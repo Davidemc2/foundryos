@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -180,7 +179,22 @@ const BuildPage = () => {
       // Check if the response data contains an error field
       if (response.data && response.data.error) {
         console.error("AI function error:", response.data.error, response.data.details);
-        throw new Error(response.data.error);
+        
+        // Handle different error types with appropriate messages
+        const errorType = response.data.errorType || "unknown";
+        
+        switch(errorType) {
+          case "authentication":
+            throw new Error("The AI service is experiencing authentication issues. Please contact the administrator.");
+          case "configuration":
+            throw new Error("The AI service is not properly configured. Please contact the administrator.");
+          case "rate_limit":
+            throw new Error("The AI service is currently experiencing high traffic. Please try again in a moment.");
+          case "timeout":
+            throw new Error("The request took too long to process. Please try with a simpler query.");
+          default:
+            throw new Error(response.data.error);
+        }
       }
 
       // Log usage statistics if available
@@ -200,7 +214,8 @@ const BuildPage = () => {
         error.message?.includes("network") ||
         error.message?.includes("500") || 
         error.message?.includes("503") ||
-        error.message?.includes("429");
+        error.message?.includes("429") ||
+        error.message?.includes("high traffic");
         
       if (retryCount < maxRetries && shouldRetry) {
         console.log(`Retrying AI function call, attempt ${retryCount + 2}`);
@@ -208,12 +223,17 @@ const BuildPage = () => {
         return callAIFunction(formattedMessages, retryCount + 1);
       }
       
+      // Set appropriate error message based on error type
       if (retryCount >= maxRetries) {
-        setConnectionError("Failed to connect after multiple attempts. The service might be temporarily unavailable.");
-      } else if (error.message?.includes("API key")) {
+        setConnectionError("Failed to connect after multiple attempts. The service might be temporarily unavailable. Please try again later.");
+      } else if (error.message?.includes("authentication") || error.message?.includes("API key")) {
         setConnectionError("Authentication error with AI service. Please contact the administrator.");
-      } else if (error.message?.includes("rate limit") || error.message?.includes("429")) {
+      } else if (error.message?.includes("configuration")) {
+        setConnectionError("The AI service is not properly configured. Please contact the administrator.");
+      } else if (error.message?.includes("rate limit") || error.message?.includes("high traffic") || error.message?.includes("429")) {
         setConnectionError("The AI service is currently experiencing high traffic. Please try again in a moment.");
+      } else if (error.message?.includes("timeout")) {
+        setConnectionError("The request timed out. Please try with a simpler query.");
       } else {
         setConnectionError(`Connection error: ${error.message}`);
       }

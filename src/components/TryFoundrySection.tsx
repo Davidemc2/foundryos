@@ -4,6 +4,7 @@ import { Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 const placeholders = [
   "I want to build an app that helps creators...",
@@ -82,10 +83,26 @@ const TryFoundrySection = () => {
     
     setIsLoading(true);
     
-    // Navigate to the build page with the prompt
+    // Show a toast notification indicating the prompt is being processed
+    toast({
+      title: "Processing your idea",
+      description: "Taking you to the build page...",
+    });
+    
+    // Navigate to the build page with the prompt after a small delay
     setTimeout(() => {
-      navigate("/build", { state: { initialPrompt: inputValue } });
-    }, 500); // Small delay to show loading state
+      try {
+        navigate("/build", { state: { initialPrompt: inputValue } });
+      } catch (error) {
+        console.error("Navigation error:", error);
+        setIsLoading(false);
+        toast({
+          title: "Error",
+          description: "Failed to navigate to the build page. Please try again.",
+          variant: "destructive"
+        });
+      }
+    }, 500);
   };
   
   return (
