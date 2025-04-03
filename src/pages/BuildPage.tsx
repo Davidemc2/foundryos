@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -69,6 +70,7 @@ const BuildPage = () => {
     estimate: { standard: string; fastTrack: string };
     totalHours: number;
   } | null>(null);
+  const [submittedEmail, setSubmittedEmail] = useState<string>("");
   
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -108,6 +110,19 @@ const BuildPage = () => {
       setTimeout(() => {
         handleSendMessage(new Event('submit') as any);
       }, 800);
+    }
+    
+    // Track page view
+    try {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'page_view', {
+          'page_title': 'Build Page',
+          'page_location': window.location.href,
+          'page_path': window.location.pathname
+        });
+      }
+    } catch (error) {
+      console.error("Error tracking page view:", error);
     }
   }, []);
 
@@ -263,6 +278,18 @@ const BuildPage = () => {
       // Reset retry count on success
       setRetryCount(0);
 
+      // Track message exchange
+      try {
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'message_exchange', {
+            'event_category': 'engagement',
+            'event_label': currentStage,
+            'value': messages.length + 1
+          });
+        }
+      } catch (error) {
+        console.error("Error tracking message exchange:", error);
+      }
     } catch (error) {
       console.error("Error processing message:", error);
       
@@ -336,12 +363,15 @@ const BuildPage = () => {
         // After the AI asks questions about the idea, move to requirements stage
         if (aiResponse.includes("features") || aiResponse.includes("requirements") || aiResponse.includes("timeline")) {
           setCurrentStage('requirements');
+          // Track stage progression
+          trackStageProgression('requirements');
         }
         break;
       case 'requirements':
         // If the AI is describing project scope, move to scope stage
         if (aiResponse.includes("scope") || aiResponse.includes("proposed") || aiResponse.includes("overview")) {
           setCurrentStage('scope');
+          trackStageProgression('scope');
         }
         break;
       case 'scope':
@@ -350,20 +380,36 @@ const BuildPage = () => {
           // Parse tasks from the message
           extractTasksFromResponse(aiResponse);
           setCurrentStage('tasks');
+          trackStageProgression('tasks');
         }
         break;
       case 'tasks':
         // If the AI is providing cost estimates, move to estimate stage
         if (aiResponse.includes("cost") || aiResponse.includes("estimate") || aiResponse.includes("budget") || aiResponse.includes("price")) {
           setCurrentStage('estimate');
+          trackStageProgression('estimate');
         }
         break;
       case 'estimate':
         // If the AI is asking for payment/email info, move to payment stage
         if (aiResponse.includes("email") || aiResponse.includes("proceed") || aiResponse.includes("build your")) {
           setCurrentStage('payment');
+          trackStageProgression('payment');
         }
         break;
+    }
+  };
+
+  const trackStageProgression = (stage: string) => {
+    try {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'stage_progression', {
+          'event_category': 'flow',
+          'event_label': stage
+        });
+      }
+    } catch (error) {
+      console.error("Error tracking stage progression:", error);
     }
   };
 
@@ -431,13 +477,109 @@ const BuildPage = () => {
     }
   };
 
-  const handleSendToBuilder = (email: string) => {
-    // In a real app, this would send the request to the server
-    toast({
-      title: "Success!",
-      description: "Your build request has been sent to the Foundry team.",
-    });
-    setShowThankYou(true);
+  const handleSendToBuilder = async (email: string) => {
+    setIsProcessing(true);
+    
+    try {
+      // Save build request with email to database
+      const buildData = {
+        email,
+        status: 'pending',
+        project_name: result ? extractProjectName(messages) : 'New Project',
+        project_scope: result?.scope || '',
+        estimated_hours: result?.totalHours || 0,
+        messages: JSON.stringify(messages.map(m => ({ 
+          role: m.type, 
+          content: m.content,
+          timestamp: m.timestamp 
+        }))),
+        created_at: new Date().toISOString()
+      };
+      
+      // Check if email is already in waitlist
+      const { data: existingWaitlist } = await supabase
+        .from('waitlist')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+        
+      // If not in waitlist, add them
+      if (!existingWaitlist) {
+        await supabase
+          .from('waitlist')
+          .insert([{ 
+            email,
+            source: 'builder',
+            interest_area: 'builder'
+          }]);
+      }
+      
+      // Store build request in builds table if it exists or directly in waitlist metadata
+      try {
+        // Attempt to store in builds table first
+        const { error: buildError } = await supabase
+          .from('builds')
+          .insert([buildData]);
+          
+        if (buildError) {
+          // If builds table doesn't exist, update waitlist entry with build info
+          const { error: updateError } = await supabase
+            .from('waitlist')
+            .update({ 
+              build_requests: buildData
+            })
+            .eq('email', email);
+            
+          if (updateError) {
+            console.error("Error storing build data:", updateError);
+          }
+        }
+      } catch (storageError) {
+        console.error("Error storing build data:", storageError);
+      }
+      
+      // Track conversion
+      try {
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'build_request', {
+            'event_category': 'conversion',
+            'event_label': email
+          });
+        }
+      } catch (trackingError) {
+        console.error("Error tracking build request:", trackingError);
+      }
+      
+      toast({
+        title: "Success!",
+        description: "Your build request has been sent to the Foundry team.",
+      });
+      
+      setSubmittedEmail(email);
+      setShowThankYou(true);
+    } catch (error) {
+      console.error("Error sending build request:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem submitting your request. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+  
+  const extractProjectName = (messages: Message[]): string => {
+    // Find the first user message for project name
+    const firstUserMessage = messages.find(m => m.type === 'user');
+    if (!firstUserMessage) return 'New Project';
+    
+    // Extract first sentence or up to 50 chars
+    let projectName = firstUserMessage.content.split('.')[0];
+    if (projectName.length > 50) {
+      projectName = projectName.substring(0, 47) + '...';
+    }
+    return projectName || 'New Project';
   };
 
   const handleBackToHome = () => {
@@ -474,7 +616,7 @@ const BuildPage = () => {
   };
 
   if (showThankYou) {
-    return <ThankYouCard onBackToHome={handleBackToHome} />;
+    return <ThankYouCard onBackToHome={handleBackToHome} email={submittedEmail} />;
   }
 
   return (

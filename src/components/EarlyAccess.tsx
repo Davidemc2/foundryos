@@ -1,9 +1,12 @@
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import EmailCapture from "./EmailCapture";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const EarlyAccess = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState("individual");
+
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -46,15 +49,39 @@ const EarlyAccess = () => {
             8 builders have joined the waitlist this week
           </p>
           
-          <div className="max-w-md mx-auto space-y-8">
-            <EmailCapture 
-              placeholder="Your email address"
-              buttonText="Get Early Access" 
-              className="scale-110"
-              variant="hero"
-            />
+          <Tabs defaultValue="individual" className="max-w-lg mx-auto" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2 mb-10 bg-violet-800/30">
+              <TabsTrigger value="individual" className="data-[state=active]:bg-violet-700">Individual</TabsTrigger>
+              <TabsTrigger value="business" className="data-[state=active]:bg-violet-700">Business</TabsTrigger>
+            </TabsList>
             
-            <div className="flex items-center justify-center gap-4 animate-fadeIn animation-delay-400">
+            <TabsContent value="individual" className="space-y-8 animate-fadeIn">
+              <EmailCapture 
+                placeholder="Your email address"
+                buttonText="Get Early Access" 
+                className="scale-110"
+                variant="hero"
+                collectMoreInfo={true}
+              />
+            </TabsContent>
+            
+            <TabsContent value="business" className="space-y-8 animate-fadeIn">
+              <div className="text-white mb-4">
+                <h3 className="text-xl font-semibold mb-2">Enterprise-ready solutions</h3>
+                <p className="text-violet-200 text-sm">
+                  Sign up for early access to Foundry OS for your business and get priority onboarding, dedicated support, and custom features.
+                </p>
+              </div>
+              <EmailCapture 
+                placeholder="Your work email"
+                buttonText="Contact Sales" 
+                className="scale-110"
+                variant="hero"
+                collectMoreInfo={true}
+              />
+            </TabsContent>
+            
+            <div className="flex items-center justify-center gap-4 animate-fadeIn animation-delay-400 mt-8">
               <div className="flex-1 h-[1px] bg-violet-300/20"></div>
               <span className="text-violet-200 text-sm font-medium">Limited Time Offer</span>
               <div className="flex-1 h-[1px] bg-violet-300/20"></div>
@@ -74,7 +101,7 @@ const EarlyAccess = () => {
                 <span className="text-violet-100 text-sm">24/7 support</span>
               </div>
             </div>
-          </div>
+          </Tabs>
         </div>
       </div>
     </section>

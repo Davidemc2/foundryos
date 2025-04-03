@@ -1,9 +1,11 @@
 
 import { ThankYouCard } from "@/components/chat/ThankYouCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const EarlyAccessConfirmation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email || "";
   
   const handleBackToHome = () => {
     navigate("/");
@@ -16,7 +18,7 @@ const EarlyAccessConfirmation = () => {
       <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse-slow animation-delay-1000"></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-3xl max-h-3xl opacity-20 bg-[radial-gradient(circle,rgba(139,92,246,0.2)_0%,transparent_70%)]"></div>
       
-      <ThankYouCard onBackToHome={handleBackToHome} />
+      <ThankYouCard onBackToHome={handleBackToHome} email={email} />
     </div>
   );
 };
